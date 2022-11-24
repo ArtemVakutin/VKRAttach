@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/vkr_attach
+    username: postgres
+    password: 11111
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    show-sql: true
+  profiles:
+    include: user
+
+logging:
+  file:
+    name: mylog.log
+  level:
+    ru.artv.bk.vkrattach: INFO
+
+server:
+  port: 8080
+
