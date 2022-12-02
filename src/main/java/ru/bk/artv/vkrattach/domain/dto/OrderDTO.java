@@ -1,16 +1,17 @@
 package ru.bk.artv.vkrattach.domain.dto;
 
 import lombok.Data;
-import ru.bk.artv.vkrattach.domain.Theme;
 
 @Data
 public class OrderDTO {
 
     private Long id;
     private Long themeId;
-    private Long preferredLecturerId;
+    private String themeName;
     private Long lecturerId;
-    private Boolean requestAccept;
+    private String lecturerName;
+    private Integer requestStatus;
     private String department;
+    private String comment;
 
 }

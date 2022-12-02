@@ -11,6 +11,7 @@ import ru.bk.artv.vkrattach.dao.repository.UserRepository;
 import ru.bk.artv.vkrattach.dao.repository.ThemeRepository;
 import ru.bk.artv.vkrattach.domain.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -72,11 +73,10 @@ public class RepositoryTest {
         Order order = new Order();
         order.setUser(user);
         order.setLecturer(lecturer);
-        order.setPreferredLecturer(lecturer);
-        order.setRequestAccept(false);
+        order.setOrderStatus(Order.OrderStatus.UNDER_CONSIDERATION);
         order.setTheme(theme);
-        order.setRequestDateTime(LocalDateTime.now());
-        order.setRequestAcceptDateTime(LocalDateTime.now());
+        order.setRequestDate(LocalDate.now());
+        order.setRequestStatusDate(LocalDate.now());
 
         requestRepository.save(order);
         requestRepository.flush();

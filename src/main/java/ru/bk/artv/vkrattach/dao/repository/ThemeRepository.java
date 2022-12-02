@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ThemeRepository extends JpaRepository<Theme, Long> {
-    List<Theme> getByThemeDepartmentAndFaculty(Department department, String faculty);
+    List<Theme> getByThemeDepartmentAndFacultyAndYearOfRecruitment(Department department, String faculty, String year);
 }

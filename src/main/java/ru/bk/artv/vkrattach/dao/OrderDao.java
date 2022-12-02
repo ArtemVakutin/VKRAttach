@@ -8,7 +8,6 @@ import ru.bk.artv.vkrattach.dao.repository.OrderRepository;
 import ru.bk.artv.vkrattach.dao.repository.ThemeRepository;
 import ru.bk.artv.vkrattach.domain.*;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
-import ru.bk.artv.vkrattach.exceptions.ResourceNotSavedException;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +27,7 @@ public class OrderDao {
     }
 
     @Transactional
-    List<Order> getOrdersByUser(User user) {
+    public List<Order> getOrdersByUser(User user) {
         List<Order> byUser = orderRepository.findByUser(user);
         if (byUser.size() > 0) {
             return byUser;
@@ -47,43 +46,50 @@ public class OrderDao {
     public List<Lecturer> getLecturersByDepartment(String department) {
         try {
             List<Lecturer> lecturerByDepartment = lecturerRepository.getLecturerByDepartment(Department.valueOf(department));
-            if (lecturerByDepartment.size()>0) {
+            if (lecturerByDepartment.size() > 0) {
                 return lecturerByDepartment;
             }
             throw new ResourceNotFoundException("Lecturers from Department : " + department + " are not found");
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new ResourceNotFoundException("No enum constant : " +
                     department + " : in ru.bk.artv.vkrattach.domain.Department");
         }
     }
 
-    public List<Theme> getThemesByDepartmentFaculty(String department, String faculty) {
+    public List<Theme> getThemesByDepartmentFacultyYear(String department, String faculty, String year) {
         try {
-            List<Theme> themeList = themeRepository.getByThemeDepartmentAndFaculty(Department.valueOf(department), faculty);
-            if (themeList.size()>0) {
+            List<Theme> themeList = themeRepository.getByThemeDepartmentAndFacultyAndYearOfRecruitment(Department.valueOf(department), faculty, year);
+            if (themeList.size() > 0) {
                 return themeList;
             }
             throw new ResourceNotFoundException("Themes from Department : " + department +
-                    "and Faculty : " + faculty
+                    "and Faculty : " + faculty + " and Year :" + year
                     + " are not found");
-        }
-        catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new ResourceNotFoundException("No enum constant : " +
                     department + " : in ru.bk.artv.vkrattach.domain.Department");
         }
     }
 
-    public Optional<Theme> getThemeById(Long id){
+    public Optional<Theme> getThemeById(Long id) {
         return themeRepository.findById(id);
     }
 
-    public Optional<Lecturer> getLecturerById(Long id){
+    public Optional<Lecturer> getLecturerById(Long id) {
         return lecturerRepository.findById(id);
     }
 
     public void addOrder(Order order) {
         orderRepository.save(order);
         orderRepository.flush();
+    }
+
+    public void deleteOrder(Long id){
+        orderRepository.deleteById(id);
+    }
+
+    public boolean isOrderExistsByIdAndUser(Long id, User user){
+        return orderRepository.existsByIdAndUser(id, user);
     }
 
 }

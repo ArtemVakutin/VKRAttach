@@ -20,6 +20,6 @@ public class UserRegistrationDao {
 
     public void saveUser(User user){
         userRepository.save(user);
+        userRepository.flush();
     }
-
 }

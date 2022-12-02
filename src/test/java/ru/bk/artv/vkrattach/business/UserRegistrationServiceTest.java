@@ -32,9 +32,7 @@ class UserRegistrationServiceTest {
         userDTO.setName("Ivan");
         userDTO.setSurname("Ivanov");
         userDTO.setPatronymic("Ivanovich");
-        userDTO.setRole(Role.USER);
         userDTO.setPassword("11111");
-        userDTO.setRegistrationDate(LocalDateTime.now());
         userDTO.setTelephone("90159141214");
     }
 

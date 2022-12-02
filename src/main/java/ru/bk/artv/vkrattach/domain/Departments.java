@@ -3,10 +3,11 @@ package ru.bk.artv.vkrattach.domain;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public class Departments {
 
-    HashMap<String, String> departmentsMap;
+    Map<String, String> departmentsMap;
 
 }

@@ -2,9 +2,8 @@ package ru.bk.artv.vkrattach.domain;
 
 
 import lombok.Data;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -21,24 +20,27 @@ public class Order {
     private Theme theme;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_preferred_lecturer")
-    private Lecturer preferredLecturer;
-
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_user", insertable = false, updatable = false)
+    @JoinColumn(name = "order_user")
     private User user;
 
-    @ManyToOne (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinColumn (name = "order_user")
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_lecturer")
     private Lecturer lecturer;
 
     @Column(name = "order_date")
-    private LocalDateTime requestDateTime;
+    private LocalDate requestDate;
 
-    @Column(name = "order_accept")
-    private Boolean requestAccept;
+    @Column(name = "order_status")
+    @Enumerated(value = EnumType.ORDINAL)
+    private OrderStatus orderStatus;
 
     @Column(name = "order_accept_date")
-    private LocalDateTime requestAcceptDateTime;
+    private LocalDate requestStatusDate;
 
+    @Column(name = "order_comments")
+    private String comments;
+
+    public enum OrderStatus {
+        UNDER_CONSIDERATION, NEED_CHANGES, REFUSED, ACCEPTED
+    }
 }

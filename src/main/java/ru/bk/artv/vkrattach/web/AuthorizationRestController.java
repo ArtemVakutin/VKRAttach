@@ -5,10 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.bk.artv.vkrattach.business.UserRegistrationService;
-import ru.bk.artv.vkrattach.domain.*;
-import ru.bk.artv.vkrattach.domain.dto.UserAuthorizationStatus;
+import ru.bk.artv.vkrattach.domain.FacultiesList;
+import ru.bk.artv.vkrattach.domain.User;
+import ru.bk.artv.vkrattach.domain.YearOfRecruitmentList;
 import ru.bk.artv.vkrattach.domain.dto.UserDTO;
 import ru.bk.artv.vkrattach.domain.dto.UserRegistrationDTO;
+
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,35 +30,33 @@ public class AuthorizationRestController {
     }
 
     @GetMapping("/getuser")
-    public UserDTO getUser(@AuthenticationPrincipal User user){
+    public UserDTO getUser(@AuthenticationPrincipal User user) {
         return userRegistrationService.getUser(user);
     }
 
-    @GetMapping("/isauthorized")
-    public UserAuthorizationStatus isAuthorised(@AuthenticationPrincipal User user) {
-        if (user == null) {
-            return new UserAuthorizationStatus(false);
-        }
-        return new UserAuthorizationStatus(true);
+    @PutMapping(consumes = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void registerUser(@RequestBody UserRegistrationDTO userDTO) {
+        log.info("AuthorizationRestController.registerUser() : " + userDTO);
+        userRegistrationService.registerNewUser(userDTO);
     }
 
-    @PostMapping(consumes = "application/json")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void registerUser(@RequestBody UserRegistrationDTO user){
-        log.info("AuthorizationRestController.registerUser())" + user);
-        userRegistrationService.registerNewUser(user);
+    @PatchMapping(consumes = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public void patchUser(@RequestBody UserRegistrationDTO userDTO, @AuthenticationPrincipal User user) {
+        log.info("AuthorizationRestController.patchUser() : " + userDTO);
+        userRegistrationService.patchUser(userDTO, user);
     }
+
 
     @GetMapping(path = "/getyears", produces = "application/json")
-    public YearOfRecruitmentList getYearsOfRecruitmentWeb(){
-        return yearOfRecruitment;
+    public Map<String, String> getYearsOfRecruitmentWeb() {
+        return yearOfRecruitment.getYears();
     }
 
     @GetMapping(path = "/getfaculties", produces = "application/json")
-    public FacultiesList getFacultiesWeb(){
-        return faculties;
+    public Map<String, String> getFacultiesWeb() {
+        return faculties.getFaculties();
     }
-
-//    @PostMapping(path = "/order", consumes = "application/json")
 
 }

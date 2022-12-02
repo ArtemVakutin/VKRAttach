@@ -24,4 +24,7 @@ public class Theme {
     @Column(name="theme_faculty")
     private String faculty;
 
+    @Column(name="theme_year_of_recruitment")
+    private String yearOfRecruitment;
+
 }
