@@ -6,6 +6,6 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class FacultiesList {
+public class Faculties {
     Map<String,String> faculties;
 }

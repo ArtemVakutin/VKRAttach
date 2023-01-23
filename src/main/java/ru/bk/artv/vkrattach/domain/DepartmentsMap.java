@@ -8,6 +8,6 @@ import java.util.Map;
 @Data
 public class Departments {
 
-    Map<String, String> departmentsMap;
+    Map<String, String> departments;
 
 }

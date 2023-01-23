@@ -7,6 +7,6 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class YearOfRecruitmentList {
+public class YearsOfRecruitment {
     Map<String, String> years;
 }
