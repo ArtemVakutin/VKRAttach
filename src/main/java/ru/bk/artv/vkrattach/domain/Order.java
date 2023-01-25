@@ -2,6 +2,8 @@ package ru.bk.artv.vkrattach.domain;
 
 
 import lombok.Data;
+import ru.bk.artv.vkrattach.domain.user.SimpleUser;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -21,7 +23,7 @@ public class Order {
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "order_user")
-    private User user;
+    private SimpleUser user;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "order_lecturer")

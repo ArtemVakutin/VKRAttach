@@ -18,8 +18,7 @@ public class Theme {
     private String themeName;
 
     @Column(name = "theme_department")
-    @Enumerated(EnumType.STRING)
-    private Department themeDepartment;
+    private String themeDepartment;
 
     @Column(name="theme_faculty")
     private String faculty;

@@ -8,7 +8,7 @@ import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 
 
 @Repository
-public interface UserRepository extends JpaRepository<DefaultUser, Long>, JpaSpecificationExecutor<SimpleUser> {
+public interface DefaultUserRepository extends JpaRepository<DefaultUser, Long> {
 
     DefaultUser findByLogin(String login);
     boolean existsByLogin(String login);

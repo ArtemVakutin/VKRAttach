@@ -1,15 +1,18 @@
 package ru.bk.artv.vkrattach.web;
 
 
+import com.turkraft.springfilter.boot.Filter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.bk.artv.vkrattach.business.OrderService;
-import ru.bk.artv.vkrattach.domain.User;
+import ru.bk.artv.vkrattach.domain.Order;
 import ru.bk.artv.vkrattach.domain.dto.OrderDTO;
+import ru.bk.artv.vkrattach.domain.user.DefaultUser;
+import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 
@@ -24,41 +27,37 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
-    @GetMapping(path = "/departments", produces = "application/json")
-    public Map<String, String> getDepartments() {
-        return orderService.getDepartments();
+    @GetMapping(path = "/getorders")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Map<Long, OrderDTO> getOrders(@Filter Specification<Order> spec){
+        return orderService.getOrders(spec);
     }
 
-    @GetMapping(path = "/lecturers", produces = "application/json")
-    public Map<String, String> getLecturers(@RequestParam("department") String department) {
-        return orderService.getLecturers(department);
+    @GetMapping(path = "/user/getorders")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<Long, OrderDTO> getOrdersForUser(@AuthenticationPrincipal SimpleUser user) {
+        return orderService.getOrders(user);
     }
 
-    @GetMapping(path = "/themes", produces = "application/json")
-    public Map<String, String> getThemes(@RequestParam("department") String department,
-                                         @RequestParam("faculty") String faculty,
-                                         @RequestParam("year") String year) {
-        return orderService.getThemes(department, faculty, year);
+    @PatchMapping
+    @ResponseStatus(HttpStatus.OK)
+    public OrderDTO patchOrder(@RequestBody OrderDTO orderDTO) {
+        orderService.patchOrder(orderDTO);
+        return orderDTO;
     }
 
-    @PutMapping(consumes = "application/json", produces = "application/json")
+    @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO addOrder(@RequestBody OrderDTO orderDTO, @AuthenticationPrincipal User user) {
+    public OrderDTO addOrder(@RequestBody OrderDTO orderDTO, @AuthenticationPrincipal SimpleUser user) {
         log.info(user.toString());
         log.info(orderDTO.toString());
         orderService.addOrder(orderDTO, user);
         return orderDTO;
     }
 
-    @GetMapping(path = "/getorders", produces = "application/json")
-    @ResponseStatus(HttpStatus.OK)
-    public Map<String, OrderDTO> getOrders(@AuthenticationPrincipal User user) {
-        return orderService.getOrders(user);
-    }
-
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteOrders(@AuthenticationPrincipal User user, @RequestParam("id") Long id){
+    public void deleteOrders(@AuthenticationPrincipal DefaultUser user, @RequestParam("id") Long id){
         orderService.deleteOrders(id, user);
     }
 

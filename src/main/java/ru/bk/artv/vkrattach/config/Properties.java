@@ -1,17 +1,19 @@
 package ru.bk.artv.vkrattach.config;
-
 import lombok.Data;
+import lombok.extern.java.Log;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.bk.artv.vkrattach.domain.Department;
-import ru.bk.artv.vkrattach.domain.Departments;
-import ru.bk.artv.vkrattach.domain.FacultiesList;
-import ru.bk.artv.vkrattach.domain.YearOfRecruitmentList;
+import ru.bk.artv.vkrattach.domain.DepartmentsMap;
+import ru.bk.artv.vkrattach.domain.FacultiesMap;
+import ru.bk.artv.vkrattach.domain.YearsOfRecruitmentMap;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+@Log
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "vkrattach.users")
@@ -19,46 +21,33 @@ public class Properties {
 
     private List<String> faculties;
     private List<String> yearOfRecruitment;
+    private Map<String, String> departments;
 
     @Bean
-    YearOfRecruitmentList yearOfRecruitment() {
-        System.out.println("-----------------------------------------------------");
-        final int i[] = {1};
-        Map<String, String> years = yearOfRecruitment.stream().collect(Collectors.toMap((year) -> {
-//            final int a = i[0]++;
-            String m = (i[0]++) + "";
-            return m;
-                },
-                year->year));
-        years.values().forEach(value-> System.out.println(value));
-        return new YearOfRecruitmentList(years);
+    YearsOfRecruitmentMap yearOfRecruitment() {
+        log.info("YearsOfRecruitment");
+        Map<String, String> years = yearOfRecruitment.stream().collect(Collectors.toMap(year -> year,
+                year -> year));
+        years.values().forEach(value -> log.info(value));
+        return new YearsOfRecruitmentMap(years);
     }
 
     @Bean
-    FacultiesList faculties() {
+    FacultiesMap faculties() {
+        log.info("Faculties");
         Map<String, String> facultiesMap = new LinkedHashMap<>();
         faculties.stream().forEach(e -> {
             String[] split = e.split("=");
             facultiesMap.put(split[0], split[1]);
         });
-
-        System.out.println("-----------------------------------------------------");
-        facultiesMap.values().stream().forEach(e -> System.out.println(e));
-        facultiesMap.keySet().stream().forEach(e -> System.out.println(e));
-
-        return new FacultiesList(facultiesMap);
+        facultiesMap.keySet().stream().forEach(e -> log.info(e + " : " + facultiesMap.get(e)));
+        return new FacultiesMap(facultiesMap);
     }
 
-
     @Bean
-    Departments departmentsMap() {
-        Map<String, String> departments = new LinkedHashMap<>();
-        Arrays.stream(Department.values()).forEach(department -> {
-            departments.put(department.name(), department.getDepartmentName());
-        });
-        Departments departmentsMap = new Departments();
-        departmentsMap.setDepartmentsMap(departments);
-        departments.keySet().stream().forEach(dep -> System.out.println(dep + " : " + departments.get(dep)));
-        return departmentsMap;
+    DepartmentsMap departmentsMap() {
+        log.info("Departments");
+        departments.keySet().stream().forEach(e -> log.info(e + " : " + departments.get(e)));
+        return new DepartmentsMap(departments);
     }
 }

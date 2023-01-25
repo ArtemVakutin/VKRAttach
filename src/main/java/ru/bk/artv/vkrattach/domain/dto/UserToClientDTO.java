@@ -6,8 +6,8 @@ import ru.bk.artv.vkrattach.domain.Role;
 import java.time.LocalDateTime;
 
 @Data
-public class UserDTO {
-    private String id;
+public class UserToClientDTO {
+    private Long id;
     private String login;
     private String surname;
     private String name;

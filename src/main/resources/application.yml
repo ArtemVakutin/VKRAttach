@@ -7,7 +7,7 @@ spring:
   jpa:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
-    show-sql: true
+    show-sql: false
   profiles:
     include: user
 
@@ -16,6 +16,13 @@ logging:
     name: mylog.log
   level:
     ru.artv.bk.vkrattach: INFO
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
 
 server:
   port: 8080

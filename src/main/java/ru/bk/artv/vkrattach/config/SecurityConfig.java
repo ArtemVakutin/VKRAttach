@@ -12,8 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import ru.bk.artv.vkrattach.dao.repository.UserRepository;
-import ru.bk.artv.vkrattach.domain.User;
+import ru.bk.artv.vkrattach.dao.repository.DefaultUserRepository;
+import ru.bk.artv.vkrattach.domain.user.DefaultUser;
 
 import java.util.Arrays;
 
@@ -24,13 +24,13 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     @Bean
-    public UserDetailsService userDetailsService(UserRepository repo) {
-        return email -> {
-            User user = repo.findByEmail(email);
+    public UserDetailsService userDetailsService(DefaultUserRepository repo) {
+        return login -> {
+            DefaultUser user = repo.findByLogin((login.toUpperCase()));
             if (user != null) {
                 return user;
             }
-            throw new UsernameNotFoundException("User : " + email + " not found");
+            throw new UsernameNotFoundException("User : " + login + " not found");
         };
     }
 

@@ -4,11 +4,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.bk.artv.vkrattach.business.mappers.UserMapper;
 import ru.bk.artv.vkrattach.domain.Role;
-import ru.bk.artv.vkrattach.domain.User;
-import ru.bk.artv.vkrattach.domain.dto.UserRegistrationDTO;
-
-import java.time.LocalDateTime;
+import ru.bk.artv.vkrattach.domain.dto.UserToPatchDTO;
+import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,11 +20,11 @@ class UserRegistrationServiceTest {
     UserMapper userMapper;
     @Autowired
     UserRegistrationService userService;
-    static UserRegistrationDTO userDTO;
+    static UserToPatchDTO userDTO;
 
     @BeforeAll
     static void beforeAll() {
-        userDTO = new UserRegistrationDTO();
+        userDTO = new UserToPatchDTO();
         userDTO.setEmail("artv@bkff.ru");
         userDTO.setFaculty("НБФЗОП");
         userDTO.setGroup("NBFZOP-151");
@@ -38,7 +37,7 @@ class UserRegistrationServiceTest {
 
     @Test
     void webToUser(){
-        User user = userMapper.toUser(userDTO);
+        SimpleUser user = (SimpleUser) userMapper.toDefaultUser(userDTO);
         assertEquals(user.getName(), "Ivan");
         assertEquals(user.getRole(), Role.USER);
         System.out.println(user);
