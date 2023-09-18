@@ -1,23 +1,20 @@
 package ru.bk.artv.vkrattach.web;
 
-import com.turkraft.springfilter.boot.Filter;
+import com.turkraft.springfilter.boot.FilterSpecification;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.bk.artv.vkrattach.business.UserRegistrationService;
-import ru.bk.artv.vkrattach.domain.FacultiesMap;
+import ru.bk.artv.vkrattach.services.UserService;
 import ru.bk.artv.vkrattach.domain.Role;
-import ru.bk.artv.vkrattach.domain.YearsOfRecruitmentMap;
-import ru.bk.artv.vkrattach.domain.dto.UserToClientDTO;
-import ru.bk.artv.vkrattach.domain.dto.UserToPatchDTO;
+import ru.bk.artv.vkrattach.dto.UserToClientDTO;
+import ru.bk.artv.vkrattach.dto.UserToPatchDTO;
 import ru.bk.artv.vkrattach.domain.user.DefaultUser;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotSavedException;
 
-import javax.validation.Valid;
-import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -25,32 +22,44 @@ import java.util.Map;
 @RequestMapping(path = "/rest/user", produces = "application/json")
 public class UserRestController {
 
-    UserRegistrationService userRegistrationService;
-    YearsOfRecruitmentMap yearOfRecruitment;
-    FacultiesMap faculties;
+    UserService userService;
 
-    public UserRestController(UserRegistrationService userRegistrationService, YearsOfRecruitmentMap yearOfRecruitment, FacultiesMap faculties) {
-        this.userRegistrationService = userRegistrationService;
-        this.yearOfRecruitment = yearOfRecruitment;
-        this.faculties = faculties;
+
+    public UserRestController(UserService userService) {
+        this.userService = userService;
+
     }
 
     @GetMapping
     public UserToClientDTO getUser(@AuthenticationPrincipal DefaultUser user) {
-        return userRegistrationService.getUser(user);
+        return userService.getUser(user);
+    }
+
+    @GetMapping(params = "id")
+    public UserToClientDTO getUser(@RequestParam Long id,@AuthenticationPrincipal DefaultUser user) {
+        if (user.getRole()== Role.ADMIN ||user.getRole()== Role.MODERATOR) {
+            return userService.getUser(id);
+        } else {
+            throw new AccessDeniedException("Access to id : " + id + " denied");
+        }
+
     }
 
     @GetMapping (path = "/getusers")
-    public Map<Long, UserToClientDTO> getUsers(@Filter Specification<SimpleUser> specs) {
-        return userRegistrationService.findUsers(specs);
+    public List<UserToClientDTO> getUsers(@RequestParam(name = "role", defaultValue = "USER") Role role,
+                                          @RequestParam(name = "filter", required = false) String filter) {
+        if(role == Role.USER) {
+            return userService.findUsers(new FilterSpecification<SimpleUser>(filter));
+        }
+        return userService.findUsers(role);
     }
 
-    @PutMapping(consumes = "application/json")
+    @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerNewUser(@Valid @RequestBody UserToPatchDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
+    public Long addUser(@RequestBody UserToPatchDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
         log.info("AuthorizationRestController.registerUser() : " + userDTO);
-        if (user == null && userDTO.getRole() == Role.USER || user.getRole() == Role.ADMIN){
-            userRegistrationService.registerNewUser(userDTO);
+        if (user == null && userDTO.getRole() == Role.USER || user != null && user.getRole() == Role.ADMIN){
+            return userService.registerNewUser(userDTO);
         } else {
             throw new ResourceNotSavedException("Для регистрации пользователя необходимо выйти из аккаунта");
         }
@@ -59,7 +68,23 @@ public class UserRestController {
     @PatchMapping(consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public void patchUser(@RequestBody UserToPatchDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
-        log.info("AuthorizationRestController.patchUser() : " + userDTO);
-        userRegistrationService.patchUser(userDTO, user);
+        log.info("AuthorizationRestController.patchUser() : userDTO : " + userDTO + "||| User : " + user.getId()
+        + " with Login " + user.getLogin()+ " with Role " + user.getRole());
+        if (userDTO.getPassword() != "" && userDTO.getPassword() != null) {
+            userService.patchSimpleUserWithPassword(userDTO, user);
+        } else {
+            userService.patchSimpleUser(userDTO, user);
+        }
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser(@RequestParam(name = "id") Long userId, @AuthenticationPrincipal DefaultUser user) {
+        log.info("AuthorizationRestController.deleteUser() : " + userId + " by " + user.getLogin());
+        if (user.getRole() == Role.ADMIN && user.getId() != userId) {
+            userService.deleteUser(userId);
+        } else {
+            throw new AccessDeniedException("You are not admin to delete users or you want to delete yourself, baby");
+        }
     }
 }

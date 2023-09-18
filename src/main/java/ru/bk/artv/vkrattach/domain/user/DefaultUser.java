@@ -26,9 +26,11 @@ public abstract class DefaultUser implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
     @NotBlank
     @Column(name = "user_login")
     private String login;
+
     @NotBlank
     @Column(name = "user_password")
     private String password;

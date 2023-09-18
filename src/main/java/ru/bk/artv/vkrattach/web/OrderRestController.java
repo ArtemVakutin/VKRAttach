@@ -7,13 +7,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.bk.artv.vkrattach.business.OrderService;
+import ru.bk.artv.vkrattach.services.OrderService;
 import ru.bk.artv.vkrattach.domain.Order;
-import ru.bk.artv.vkrattach.domain.dto.OrderDTO;
+import ru.bk.artv.vkrattach.domain.user.AdminUser;
+import ru.bk.artv.vkrattach.dto.OrderDTO;
 import ru.bk.artv.vkrattach.domain.user.DefaultUser;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 
-import java.util.Map;
+import java.util.List;
 
 
 @Slf4j
@@ -27,17 +28,18 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
+    @GetMapping(path = "/getorders", params = "userId")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderDTO> getOrdersById (@RequestParam Long userId, @AuthenticationPrincipal DefaultUser user) {
+        return orderService.getOrders(userId, user);
+    }
+
     @GetMapping(path = "/getorders")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Map<Long, OrderDTO> getOrders(@Filter Specification<Order> spec){
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderDTO> getOrders(@Filter Specification<Order> spec){
         return orderService.getOrders(spec);
     }
 
-    @GetMapping(path = "/user/getorders")
-    @ResponseStatus(HttpStatus.OK)
-    public Map<Long, OrderDTO> getOrdersForUser(@AuthenticationPrincipal SimpleUser user) {
-        return orderService.getOrders(user);
-    }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
@@ -46,18 +48,33 @@ public class OrderRestController {
         return orderDTO;
     }
 
+    //to do
+    //Позволяет несколько раз делать заявки на неотклоненные ордеры
+
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO addOrder(@RequestBody OrderDTO orderDTO, @AuthenticationPrincipal SimpleUser user) {
+    public OrderDTO addOrder(@RequestBody OrderDTO orderDTO, @AuthenticationPrincipal DefaultUser user) {
         log.info(user.toString());
         log.info(orderDTO.toString());
-        orderService.addOrder(orderDTO, user);
+        if (user instanceof SimpleUser) {
+            log.info(user.getClass().toString());
+            log.info(user.toString() + "    " + "SIMPLE USER");
+            orderService.addOrderByUser(orderDTO, (SimpleUser) user);
+        } else if (user instanceof AdminUser) {
+            orderService.addOrderByAdmin(orderDTO);
+            log.info(user.getClass().toString());
+            log.info(user.toString() + "    " + "ADMIN USER");
+        } else {
+            log.info(user.getClass().toString());
+            log.info(user.toString() + "    " + "DEFAULT USER");
+        }
         return orderDTO;
     }
 
+
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteOrders(@AuthenticationPrincipal DefaultUser user, @RequestParam("id") Long id){
+    public void deleteOrder(@AuthenticationPrincipal DefaultUser user, @RequestParam("id") Long id){
         orderService.deleteOrders(id, user);
     }
 

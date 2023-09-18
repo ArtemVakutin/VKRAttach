@@ -19,42 +19,26 @@ import java.util.Optional;
 public class OrderDao {
 
     OrderRepository orderRepository;
-    LecturerRepository lecturerRepository;
 
     public OrderDao(OrderRepository orderRepository, LecturerRepository lecturerRepository, ThemeRepository themeRepository) {
         this.orderRepository = orderRepository;
-        this.lecturerRepository = lecturerRepository;
     }
 
-    @Transactional
     public List<Order> getOrdersByUser(SimpleUser user) {
-        List<Order> byUser = orderRepository.findByUser(user);
-        if (byUser.size() > 0) {
-            return byUser;
+        List<Order> orders = orderRepository.findByUser(user);
+        if (!orders.isEmpty()) {
+            return orders;
         }
-        throw new ResourceNotFoundException("Orders for User : "
-                + user.getId()
-                + " "
-                + user.getLogin()
-                + " "
-                + user.getSurname()
-                + " "
-                + user.getName()
-                + "are not found");
+        throw new ResourceNotFoundException("Orders by user : " + user.getId() + " are not found");
     }
 
     public Optional<Order> getOrder(Long id) {
         return orderRepository.findById(id);
     }
 
-    public Optional<Lecturer> getLecturerById(Long id) {
-        return lecturerRepository.findById(id);
-    }
-
     public void addOrder(Order order) {
-        orderRepository.save(order);
-        orderRepository.flush();
-    }
+        orderRepository.saveAndFlush(order);
+     }
 
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
@@ -64,7 +48,17 @@ public class OrderDao {
         return orderRepository.existsByIdAndUser(id, user);
     }
 
+    public boolean isOrderExistsByTheme(Theme theme) {
+        return orderRepository.existsByTheme(theme);
+    }
+
+
+
     public List<Order> getOrders(Specification<Order> spec) {
-        return orderRepository.findAll(spec);
+        List<Order> orders = orderRepository.findAll(spec);
+        if (orders.isEmpty()){
+            throw new ResourceNotFoundException(" заявок с такими данными не найдено");
+        }
+        return orders;
     }
 }

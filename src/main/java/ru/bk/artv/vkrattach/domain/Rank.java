@@ -45,7 +45,4 @@ public enum Rank {
             return rankType;
         }
     }
-
-
-
 }

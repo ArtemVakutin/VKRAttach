@@ -8,7 +8,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 //Класс вылавливает все Exceptions и оборачивает в ResponseEntity вместо обычного ответа.
 
@@ -29,7 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<AppError> catchResourceNotFoundException(ResourceNotFoundException e) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage());
         return new ResponseEntity<>(new AppError(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
@@ -40,11 +44,29 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotAuthorizedException.class)
-    public ResponseEntity<AppError> catchUzerNotAuthorizedException(UserNotAuthorizedException e) {
+    public ResponseEntity<AppError> catchUserNotAuthorizedException(UserNotAuthorizedException e) {
+        log.warn(e.getMessage());
+        return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<AppError> catchConstraintViolationException(ConstraintViolationException e) {
+        log.debug(e.getMessage(), e);
+        log.error(e.getMessage());
+        Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
+        String collect = constraintViolations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(",\n"));
+        return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), collect), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(OrderAcceptedException.class)
+    public ResponseEntity<AppError> catchOrderAcceptedException(OrderAcceptedException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
-
-
+    @ExceptionHandler(UploadResourceException.class)
+    public ResponseEntity<AppError> catchUploadResourceException(UploadResourceException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
 }

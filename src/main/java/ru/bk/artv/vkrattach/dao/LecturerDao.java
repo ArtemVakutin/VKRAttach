@@ -33,10 +33,21 @@ public class LecturerDao {
     }
 
     public void patchLecturer(Lecturer lecturer){
-        lecturerRepository.save(lecturer);
+        lecturerRepository.saveAndFlush(lecturer);
     }
 
     public void saveLecturer(Lecturer lecturer) {
         lecturerRepository.save(lecturer);
+    }
+
+    public void deleteLecturer(Lecturer lecturer){
+        lecturerRepository.delete(lecturer);
+    }
+
+    public boolean checkLecturerIsExisted(Lecturer lecturer) {
+        return lecturerRepository.existsBySurnameAndNameAndPatronymicAndDepartment(lecturer.getSurname(),
+                lecturer.getName(),
+                lecturer.getPatronymic(),
+                lecturer.getDepartment());
     }
 }

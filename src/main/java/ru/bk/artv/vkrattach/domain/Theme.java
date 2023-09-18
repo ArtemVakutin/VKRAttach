@@ -3,6 +3,7 @@ package ru.bk.artv.vkrattach.domain;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -18,7 +19,7 @@ public class Theme {
     private String themeName;
 
     @Column(name = "theme_department")
-    private String themeDepartment;
+    private String department;
 
     @Column(name="theme_faculty")
     private String faculty;
@@ -26,4 +27,17 @@ public class Theme {
     @Column(name="theme_year_of_recruitment")
     private String yearOfRecruitment;
 
+    @OneToMany(mappedBy = "theme")
+    private List<Order> orders;
+
+    @Override
+    public String toString() {
+        return "Theme{" +
+                "themeId=" + themeId +
+                ", themeName='" + themeName + '\'' +
+                ", themeDepartment='" + department + '\'' +
+                ", faculty='" + faculty + '\'' +
+                ", yearOfRecruitment='" + yearOfRecruitment + '\'' +
+                '}';
+    }
 }

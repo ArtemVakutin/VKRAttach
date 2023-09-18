@@ -3,12 +3,12 @@ package ru.bk.artv.vkrattach.web;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.bk.artv.vkrattach.business.DomainService;
-import ru.bk.artv.vkrattach.business.LecturerService;
+import ru.bk.artv.vkrattach.services.LecturerService;
 import ru.bk.artv.vkrattach.domain.Lecturer;
+import ru.bk.artv.vkrattach.dto.LecturerDTO;
 
 import javax.validation.Valid;
-import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -17,37 +17,32 @@ public class LecturerRestController {
 
     LecturerService lecturerService;
 
-    public LecturerRestController(DomainService domainService, LecturerService lecturerService) {
+    public LecturerRestController(LecturerService lecturerService) {
         this.lecturerService = lecturerService;
     }
 
     @GetMapping(path = "/getlecturers")
     @ResponseStatus(HttpStatus.OK)
-    public Map<Long, Lecturer> getLecturers(@RequestParam("department") String department) {
+    public List<Lecturer> getLecturers(@RequestParam("department") String department) {
         return lecturerService.getLecturers(department);
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
-    public void patchLecturer(@RequestBody @Valid Lecturer lecturer) {
-        lecturerService.patchLecturer(lecturer);
+    public LecturerDTO patchLecturer(@RequestBody @Valid LecturerDTO lecturer) {
+        return lecturerService.patchLecturer(lecturer);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public void putLecturer(@RequestBody @Valid Lecturer lecturer) {
-        lecturerService.patchLecturer(lecturer);
+    public LecturerDTO putLecturer(@RequestBody @Valid LecturerDTO lecturer) {
+        return lecturerService.putLecturer(lecturer);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
     public void deleteLecturer(@RequestParam("id") Long id,
                                @RequestParam(name = "recover", required = false, defaultValue = "false") Boolean recover) {
-        if (recover){
-            lecturerService.recoverLecturer(id);
-        } else {
             lecturerService.deleteLecturer(id);
-        }
-
-    }
+            }
 }

@@ -37,11 +37,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeRequests()
-                .antMatchers("/vkrorder", "/getuser")
+                .antMatchers( "/getuser")
                 .hasRole("USER")
-                .antMatchers("/vkradmin", "/getuser")
+                .antMatchers( "/getuser")
                 .hasRole("ADMIN")
-                .antMatchers("/vkrdepartmenthead", "/getuser")
+                .antMatchers("/getuser")
                 .hasRole("MODERATOR")
                 .antMatchers("/rest/isauthorized")
                 .permitAll()
@@ -65,7 +65,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:3000/" ));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:3000/", "chrome-extension://coohjcphdfgbiolnekdpbcijmhambjff" ));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","OPTIONS","PUT", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("*"));

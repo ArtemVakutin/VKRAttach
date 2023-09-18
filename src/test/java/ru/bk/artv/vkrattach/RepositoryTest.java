@@ -66,7 +66,7 @@ public class RepositoryTest {
         Theme theme = new Theme();
         theme.setThemeName("Разгильдяйство и распиздяйство в обществе дураков");
         theme.setFaculty("НБФЗОП");
-        theme.setThemeDepartment("UPR");
+        theme.setDepartment("UPR");
 
         themeRepository.save(theme);
         themeRepository.flush();

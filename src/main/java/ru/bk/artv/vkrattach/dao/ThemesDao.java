@@ -1,5 +1,6 @@
 package ru.bk.artv.vkrattach.dao;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.bk.artv.vkrattach.dao.repository.ThemeRepository;
 import ru.bk.artv.vkrattach.domain.Theme;
@@ -19,7 +20,7 @@ public class ThemesDao {
 
     public List<Theme> getThemesByDepartmentFacultyYear(String department, String faculty, String year) {
         try {
-            List<Theme> themeList = themeRepository.getByThemeDepartmentAndFacultyAndYearOfRecruitment(department, faculty, year);
+            List<Theme> themeList = themeRepository.getByDepartmentAndFacultyAndYearOfRecruitment(department, faculty, year);
             if (themeList.size() > 0) {
                 return themeList;
             }
@@ -32,8 +33,27 @@ public class ThemesDao {
         }
     }
 
+    public List<Theme> getThemesByDepartmentFacultyYearNoException(String department, String faculty, String year) {
+        return themeRepository.getByDepartmentAndFacultyAndYearOfRecruitment(department, faculty, year);
+    }
+
     public Optional<Theme> getThemeById(Long id) {
         return themeRepository.findById(id);
     }
 
+    public List<Theme> getAllThemes(Specification<Theme> spec) {
+        return themeRepository.findAll(spec);
+    }
+
+    public void deleteTheme(Long id) {
+        themeRepository.deleteById(id);
+    }
+
+    public void addTheme(Theme theme) {
+        themeRepository.saveAndFlush(theme);
+    }
+
+    public void deleteThemes(String department, String faculty, String year) {
+        themeRepository.deleteByDepartmentAndFacultyAndYearOfRecruitment(department, faculty, year);
+    }
 }
