@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ThemeRepository extends JpaRepository<Theme, Long>, JpaSpecificationExecutor<Theme> {
-    List<Theme> getByDepartmentAndFacultyAndYearOfRecruitment(String department, String faculty, String year);
-    void deleteByDepartmentAndFacultyAndYearOfRecruitment(String department, String faculty, String year);
+    List<Theme> getByDepartmentAndFacultyAndYear(String department, String faculty, String year);
+    void deleteByDepartmentAndFacultyAndYear(String department, String faculty, String year);
 
 }

@@ -8,7 +8,7 @@ import ru.bk.artv.vkrattach.dao.OrderDao;
 import ru.bk.artv.vkrattach.dao.ThemesDao;
 import ru.bk.artv.vkrattach.dao.UserDao;
 import ru.bk.artv.vkrattach.domain.Order;
-import ru.bk.artv.vkrattach.domain.Role;
+import ru.bk.artv.vkrattach.domain.user.Role;
 import ru.bk.artv.vkrattach.domain.user.DefaultUser;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 import ru.bk.artv.vkrattach.dto.OrderDTO;

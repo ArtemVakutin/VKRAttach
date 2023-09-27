@@ -1,24 +1,29 @@
 package ru.bk.artv.vkrattach.web;
 
 import org.springframework.web.bind.annotation.*;
-import ru.bk.artv.vkrattach.domain.*;
+import ru.bk.artv.vkrattach.domain.ConfigData;
+import ru.bk.artv.vkrattach.services.ConfigDataService;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "rest/domain")
 public class DomainRestController {
 
-AllDomainData allDomainData;
+ConfigDataService configDataService;
 
-
-    public DomainRestController(AllDomainData allDomainData) {
-        this.allDomainData = allDomainData;
+    public DomainRestController(ConfigDataService allDomainData) {
+        this.configDataService = allDomainData;
     }
 
+//    @GetMapping
+//    public AllConfigDataDto getDepartments() {
+//        return allConfigData;
+//    }
+
     @GetMapping
-    public AllDomainData getDepartments() {
-        return allDomainData;
+    public Map<ConfigData.ConfigType, List<ConfigData>> getDomainData() {
+        return configDataService.getDomainData();
     }
 }

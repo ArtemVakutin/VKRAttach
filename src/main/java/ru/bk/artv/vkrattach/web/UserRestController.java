@@ -7,7 +7,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.bk.artv.vkrattach.services.UserService;
-import ru.bk.artv.vkrattach.domain.Role;
+import ru.bk.artv.vkrattach.domain.user.Role;
 import ru.bk.artv.vkrattach.dto.UserToClientDTO;
 import ru.bk.artv.vkrattach.dto.UserToPatchDTO;
 import ru.bk.artv.vkrattach.domain.user.DefaultUser;

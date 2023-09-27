@@ -8,6 +8,8 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
     show-sql: false
+    properties:
+      hibernate.ejb.interceptor: ru.bk.artv.vkrattach.config.EmptyStringInterceptor
   profiles:
     include: user
   servlet:

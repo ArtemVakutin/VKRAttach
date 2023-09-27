@@ -20,7 +20,7 @@ public class ThemesDao {
 
     public List<Theme> getThemesByDepartmentFacultyYear(String department, String faculty, String year) {
         try {
-            List<Theme> themeList = themeRepository.getByDepartmentAndFacultyAndYearOfRecruitment(department, faculty, year);
+            List<Theme> themeList = themeRepository.getByDepartmentAndFacultyAndYear(department, faculty, year);
             if (themeList.size() > 0) {
                 return themeList;
             }
@@ -34,7 +34,7 @@ public class ThemesDao {
     }
 
     public List<Theme> getThemesByDepartmentFacultyYearNoException(String department, String faculty, String year) {
-        return themeRepository.getByDepartmentAndFacultyAndYearOfRecruitment(department, faculty, year);
+        return themeRepository.getByDepartmentAndFacultyAndYear(department, faculty, year);
     }
 
     public Optional<Theme> getThemeById(Long id) {
@@ -54,6 +54,6 @@ public class ThemesDao {
     }
 
     public void deleteThemes(String department, String faculty, String year) {
-        themeRepository.deleteByDepartmentAndFacultyAndYearOfRecruitment(department, faculty, year);
+        themeRepository.deleteByDepartmentAndFacultyAndYear(department, faculty, year);
     }
 }

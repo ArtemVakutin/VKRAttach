@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import ru.bk.artv.vkrattach.services.mappers.UserMapper;
 import ru.bk.artv.vkrattach.dao.UserDao;
-import ru.bk.artv.vkrattach.domain.Role;
+import ru.bk.artv.vkrattach.domain.user.Role;
 import ru.bk.artv.vkrattach.dto.UserToClientDTO;
 import ru.bk.artv.vkrattach.dto.UserToPatchDTO;
 import ru.bk.artv.vkrattach.domain.user.DefaultUser;

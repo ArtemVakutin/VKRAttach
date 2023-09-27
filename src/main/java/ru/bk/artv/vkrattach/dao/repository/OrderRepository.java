@@ -19,7 +19,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 
     @Query("select ord from Order ord where ord.theme.department = :department and" +
             " ord.user.faculty = :faculty" +
-            " and ord.user.yearOfRecruitment = :year")
+            " and ord.user.year = :year")
     List<Order> findOrdersForModerator(@Param("department") String department,
                                        @Param("faculty") String faculty,
                                        @Param("year") String year);

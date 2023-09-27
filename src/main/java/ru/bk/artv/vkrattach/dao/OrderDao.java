@@ -3,11 +3,9 @@ package ru.bk.artv.vkrattach.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.bk.artv.vkrattach.dao.repository.LecturerRepository;
 import ru.bk.artv.vkrattach.dao.repository.OrderRepository;
-import ru.bk.artv.vkrattach.dao.repository.ThemeRepository;
-import ru.bk.artv.vkrattach.domain.*;
+import ru.bk.artv.vkrattach.domain.Order;
+import ru.bk.artv.vkrattach.domain.Theme;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 
@@ -20,7 +18,7 @@ public class OrderDao {
 
     OrderRepository orderRepository;
 
-    public OrderDao(OrderRepository orderRepository, LecturerRepository lecturerRepository, ThemeRepository themeRepository) {
+    public OrderDao(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
@@ -51,8 +49,6 @@ public class OrderDao {
     public boolean isOrderExistsByTheme(Theme theme) {
         return orderRepository.existsByTheme(theme);
     }
-
-
 
     public List<Order> getOrders(Specification<Order> spec) {
         List<Order> orders = orderRepository.findAll(spec);

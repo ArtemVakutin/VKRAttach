@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.bk.artv.vkrattach.dao.LecturerDao;
 import ru.bk.artv.vkrattach.dao.ThemesDao;
 import ru.bk.artv.vkrattach.dao.UserDao;
-import ru.bk.artv.vkrattach.domain.Role;
+import ru.bk.artv.vkrattach.domain.user.Role;
 import ru.bk.artv.vkrattach.dto.LecturerDTO;
 import ru.bk.artv.vkrattach.dto.ThemeDTO;
 import ru.bk.artv.vkrattach.dto.UploadAnswer;

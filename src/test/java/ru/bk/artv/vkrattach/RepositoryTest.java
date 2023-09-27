@@ -10,6 +10,7 @@ import ru.bk.artv.vkrattach.dao.repository.OrderRepository;
 import ru.bk.artv.vkrattach.dao.repository.DefaultUserRepository;
 import ru.bk.artv.vkrattach.dao.repository.ThemeRepository;
 import ru.bk.artv.vkrattach.domain.*;
+import ru.bk.artv.vkrattach.domain.user.Role;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 
 import java.time.LocalDate;
@@ -58,7 +59,7 @@ public class RepositoryTest {
         user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode("11111"));
         user.setLogin("user@user.com");
-        user.setYearOfRecruitment("2008");
+        user.setYear("2008");
 
         userRepository.save(user);
         userRepository.flush();

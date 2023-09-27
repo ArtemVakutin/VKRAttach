@@ -24,20 +24,9 @@ public class Theme {
     @Column(name="theme_faculty")
     private String faculty;
 
-    @Column(name="theme_year_of_recruitment")
-    private String yearOfRecruitment;
+    @Column(name="theme_year")
+    private String year;
 
     @OneToMany(mappedBy = "theme")
     private List<Order> orders;
-
-    @Override
-    public String toString() {
-        return "Theme{" +
-                "themeId=" + themeId +
-                ", themeName='" + themeName + '\'' +
-                ", themeDepartment='" + department + '\'' +
-                ", faculty='" + faculty + '\'' +
-                ", yearOfRecruitment='" + yearOfRecruitment + '\'' +
-                '}';
-    }
 }

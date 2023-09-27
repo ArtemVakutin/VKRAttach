@@ -30,63 +30,17 @@ public class Lecturer {
         private String telephone;
 
     @Column(name = "lecturer_academic_degree")
-    @Enumerated
-    private AcademicDegree academicDegree;
+    private String academicDegree;
 
     @Column(name = "lecturer_academic_title")
-    @Enumerated
-    private AcademicTitle academicTitle;
+    private String academicTitle;
 
     @Column(name = "lecturer_department")
     private String department;
 
     @Column(name = "lecturer_rank")
-    @Enumerated(EnumType.STRING)
-    private Rank rank;
+    private String rank;
 
-    public enum LecturerPosition{
-        LECTURER("отсутствует"),
-        SENIOR_LECTURER("кандидат юридических наук"),
-        DOCENT("доктор юридических наук"),
-        PROFESSOR("кандидат юридических наук"),
-        DEPUTY_HEAD_DEPARTMENT("доктор юридических наук"),
-        HEAD_DEPARTMENT("доктор юридических наук");
-
-        final String name;
-
-        LecturerPosition(String name) {
-            this.name = name;
-        }
-
-        public String getPosition() {
-            return name;
-        }
-    }
-
-
-    public enum AcademicDegree{
-        NONE("отсутствует"), CANDIDATE("кандидат юридических наук"), DOCTOR("доктор юридических наук");
-        final String name;
-
-        AcademicDegree(String name) {
-            this.name = name;
-        }
-
-                public String getName() {
-            return name;
-        }
-    }
-
-    public enum AcademicTitle{
-        NONE("отсутствует"), DOCENT("доцент"), PROFESSOR("профессор");
-        final String name;
-
-        AcademicTitle(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
+    @Column(name = "lecturer_position")
+    private String position;
 }

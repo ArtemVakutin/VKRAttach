@@ -1,10 +1,10 @@
 package ru.bk.artv.vkrattach.domain.user;
 
 import lombok.Data;
-import ru.bk.artv.vkrattach.domain.Rank;
-import ru.bk.artv.vkrattach.domain.Role;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 @Data
@@ -36,14 +36,15 @@ public class SimpleUser extends DefaultUser{
     @Column(name = "user_group")
     private String group;
 
-    @Column(name = "user_year_of_recruitment")
-    private String yearOfRecruitment;
+    @Column(name = "user_year")
+    private String year;
 
     @Column(name = "user_rank")
-    @Enumerated(EnumType.STRING)
-    private Rank rank;
+    private String rank;
 
     @Column(name = "user_rank_type")
-    @Enumerated(EnumType.STRING)
-    private Rank.RankType rankType;
+    private String rankType;
+
+    @Column(name = "user_position")
+    private String position;
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.bk.artv.vkrattach.dao.repository.DefaultUserRepository;
 import ru.bk.artv.vkrattach.dao.repository.OrderRepository;
 import ru.bk.artv.vkrattach.dao.repository.SimpleUserRepository;
-import ru.bk.artv.vkrattach.domain.Role;
+import ru.bk.artv.vkrattach.domain.user.Role;
 import ru.bk.artv.vkrattach.domain.user.DefaultUser;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;

@@ -29,7 +29,7 @@ public class ThemesMapper {
         themeDTO.setThemeName(theme.getThemeName());
         themeDTO.setDepartment(theme.getDepartment());
         themeDTO.setFaculty(theme.getFaculty());
-        themeDTO.setYearOfRecruitment(theme.getYearOfRecruitment());
+        themeDTO.setYearOfRecruitment(theme.getYear());
         if (theme.getOrders() != null && !theme.getOrders().isEmpty()) {
             List<Order> orders = theme.getOrders().stream().filter((order -> order.getOrderStatus() != Order.OrderStatus.REFUSED)).collect(Collectors.toList());
             if (orders.size() > 1) {

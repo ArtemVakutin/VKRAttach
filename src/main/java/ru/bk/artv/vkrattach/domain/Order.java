@@ -43,6 +43,6 @@ public class Order {
     private String comments;
 
     public enum OrderStatus {
-        UNDER_CONSIDERATION, NEED_CHANGES, REFUSED, ACCEPTED
+        UNDER_CONSIDERATION, REFUSED, ACCEPTED
     }
 }

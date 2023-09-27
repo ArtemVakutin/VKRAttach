@@ -1,58 +1,39 @@
 -- Админы
 
-INSERT INTO public.vkr_user(
-    user_login, user_password, user_role)
+INSERT INTO public.vkr_user(user_login, user_password, user_role)
 VALUES ('ADMIN',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
-        'ADMIN');
-
-INSERT INTO public.vkr_user(
-    user_login, user_password, user_role)
-VALUES ('UCH',
+        'ADMIN'),
+       ('UCH',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
         'ADMIN');
--- Модераторы
 
-INSERT INTO public.vkr_user(
-    user_login, user_password, user_role)
+-- Модераторы
+INSERT INTO public.vkr_user(user_login, user_password, user_role, user_department)
 VALUES ('UPV',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
-        'MODERATOR');
-
-INSERT INTO public.vkr_user(
-    user_login, user_password, user_role)
-VALUES ('UPС',
+        'MODERATOR', 'УПв'),
+       ('UPС',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
-        'MODERATOR');
-
-INSERT INTO public.vkr_user(
-    user_login, user_password, user_role)
-VALUES ('CRIMINOLOGY',
+        'MODERATOR', 'УПц'),
+       ('CRIMINOLOGY',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
-        'MODERATOR');
-
-INSERT INTO public.vkr_user(
-    user_login, user_password, user_role)
-VALUES ('CRIMINALISTICS',
+        'MODERATOR', 'Криминологии'),
+       ('CRIMINALISTICS',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
-        'MODERATOR');
-
-INSERT INTO public.vkr_user(
-    user_login, user_password, user_role)
-VALUES ('ORD',
+        'MODERATOR', 'Криминалистики'),
+       ('ORD',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
-        'MODERATOR');
-
-INSERT INTO public.vkr_user(
-    user_login, user_password, user_role)
-VALUES ('ADMINISTRATIVE_LAW',
+        'MODERATOR', 'ОРД'),
+       ('ADMINISTRATIVE_LAW',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
-        'MODERATOR');
+        'MODERATOR', 'АПиАД');
 
 --Юзеры
 
-INSERT INTO public.vkr_user(
-    user_login, user_surname, user_name, user_patronymic, user_email, user_password, user_registration_date, user_telephone, user_faculty, user_group, user_role, user_year_of_recruitment, user_rank, user_rank_type)
+INSERT INTO public.vkr_user(user_login, user_surname, user_name, user_patronymic, user_email, user_password,
+                            user_registration_date, user_telephone, user_faculty, user_group, user_role,
+                            user_year, user_rank, user_rank_type, user_position)
 VALUES ('IVANOV',
         'Иванов',
         'Иван',
@@ -64,13 +45,11 @@ VALUES ('IVANOV',
         'НБФЗОП',
         '581',
         'USER',
-        '2018',
-        'COLONEL',
-        'POLICE');
-
-INSERT INTO public.vkr_user(
-    user_login, user_surname, user_name, user_patronymic, user_email, user_password, user_registration_date, user_telephone, user_faculty, user_group, user_role, user_year_of_recruitment, user_rank, user_rank_type)
-VALUES ('PETROV',
+        '2019',
+        'рядовой',
+        'полиции',
+        'слушатель'),
+       ('PETROV',
         'Петров',
         'Петр',
         'Петрович',
@@ -81,13 +60,11 @@ VALUES ('PETROV',
         'НБФЗОП',
         '581',
         'USER',
-        '2018',
-        'CAPTAIN',
-        'POLICE');
-
-INSERT INTO public.vkr_user(
-    user_login, user_surname, user_name, user_patronymic, user_email, user_password, user_registration_date, user_telephone, user_faculty, user_group, user_role, user_year_of_recruitment, user_rank, user_rank_type)
-VALUES ('SIDOROV',
+        '2019',
+        'лейтенант',
+        'полиции',
+        'слушатель'),
+       ('SIDOROV',
         'Сидоров',
         'Сидр',
         'Сидорович',
@@ -98,14 +75,11 @@ VALUES ('SIDOROV',
         'НБФЗОП',
         '582',
         'USER',
-        '2018',
-        'CAPTAIN',
-        'POLICE');
-
-
-INSERT INTO public.vkr_user(
-    user_login, user_surname, user_name, user_patronymic, user_email, user_password, user_registration_date, user_telephone, user_faculty, user_group, user_role, user_year_of_recruitment, user_rank, user_rank_type)
-VALUES ('ARTEMOV',
+        '2019',
+        'капитан',
+        'полиции',
+        'слушатель'),
+       ('ARTEMOV',
         'Артемов',
         'Артем',
         'Артемович',
@@ -116,40 +90,7 @@ VALUES ('ARTEMOV',
         'ПФЗОП',
         '581',
         'USER',
-        '2018',
-        'CAPTAIN',
-        'POLICE');
-
-INSERT INTO public.vkr_user(
-    user_login, user_surname, user_name, user_patronymic, user_email, user_password, user_registration_date, user_telephone, user_faculty, user_group, user_role, user_year_of_recruitment, user_rank, user_rank_type)
-VALUES ('VASILIEV',
-        'Васильев',
-        'Василий',
-        'Васильевич',
-        'vasiliev@p.ru',
-        '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
-        '2022-11-03 15:05:24.000000',
-        '904191234123',
-        'ПФЗОП',
-        '581',
-        'USER',
-        '2018',
-        'CAPTAIN',
-        'POLICE');
-
-INSERT INTO public.vkr_user(
-    user_login, user_surname, user_name, user_patronymic, user_email, user_password, user_registration_date, user_telephone, user_faculty, user_group, user_role, user_year_of_recruitment, user_rank, user_rank_type)
-VALUES ('POPOV',
-        'Попов',
-        'Поп',
-        'Попович',
-        '1@2.ru',
-        '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
-        '2022-11-03 15:05:24.000000',
-        '904191234123',
-        'ЮВФЗОМ',
-        '284',
-        'USER',
-        '2020',
-        'CAPTAIN',
-        'POLICE');
+        '2019',
+        'капитан',
+        'полиции',
+        'слушатель');

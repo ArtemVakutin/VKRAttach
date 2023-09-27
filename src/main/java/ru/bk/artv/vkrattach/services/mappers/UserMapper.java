@@ -3,7 +3,7 @@ package ru.bk.artv.vkrattach.services.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import ru.bk.artv.vkrattach.domain.Role;
+import ru.bk.artv.vkrattach.domain.user.Role;
 import ru.bk.artv.vkrattach.dto.UserToClientDTO;
 import ru.bk.artv.vkrattach.dto.UserToPatchDTO;
 import ru.bk.artv.vkrattach.domain.user.AdminUser;

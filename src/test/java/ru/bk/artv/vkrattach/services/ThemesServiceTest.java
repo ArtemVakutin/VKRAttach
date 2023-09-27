@@ -61,7 +61,7 @@ class ThemesServiceTest {
                 Theme theme = new Theme();
                 theme.setDepartment(invocationOnMock.getArgument(0, String.class));
                 theme.setFaculty(invocationOnMock.getArgument(1, String.class));
-                theme.setYearOfRecruitment(invocationOnMock.getArgument(2, String.class));
+                theme.setYear(invocationOnMock.getArgument(2, String.class));
                 theme.setThemeName("Прыжки в воду без парашюта");
                 return new ArrayList<Theme>(List.of(theme));
             }

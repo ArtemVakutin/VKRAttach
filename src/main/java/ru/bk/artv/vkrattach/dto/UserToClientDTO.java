@@ -1,9 +1,7 @@
 package ru.bk.artv.vkrattach.dto;
 
 import lombok.Data;
-import ru.bk.artv.vkrattach.domain.Role;
-
-import java.time.LocalDateTime;
+import ru.bk.artv.vkrattach.domain.user.Role;
 
 @Data
 public class UserToClientDTO {
@@ -16,6 +14,6 @@ public class UserToClientDTO {
     private String telephone;
     private String faculty;
     private String group;
-    private String yearOfRecruitment;
+    private String year;
     private Role role;
 }

@@ -1,10 +1,9 @@
 package ru.bk.artv.vkrattach.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import ru.bk.artv.vkrattach.services.validators.PasswordConstraint;
-import ru.bk.artv.vkrattach.domain.Role;
+import ru.bk.artv.vkrattach.domain.user.Role;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
