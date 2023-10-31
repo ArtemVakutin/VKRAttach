@@ -50,12 +50,16 @@ public abstract class UserMapper {
     public UserToClientDTO toUserDTO(DefaultUser user) {
         if (user instanceof SimpleUser) {
             return UserDTOFromSimpleUser((SimpleUser) user);
+        } else if (user instanceof ModeratorUser) {
+            return UserDTOFromModeratorUser((ModeratorUser) user);
         }
         return UserDTOFromDefaultUser(user);
 
     }
 
     abstract UserToClientDTO UserDTOFromDefaultUser(DefaultUser defaultUser);
+
+    abstract UserToClientDTO UserDTOFromModeratorUser(ModeratorUser defaultUser);
 
     abstract UserToClientDTO UserDTOFromSimpleUser(SimpleUser defaultUser);
 

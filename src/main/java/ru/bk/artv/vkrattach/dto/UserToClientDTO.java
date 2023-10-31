@@ -15,5 +15,6 @@ public class UserToClientDTO {
     private String faculty;
     private String group;
     private String year;
+    private String department;
     private Role role;
 }

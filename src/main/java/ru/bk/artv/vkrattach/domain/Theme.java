@@ -1,8 +1,8 @@
 package ru.bk.artv.vkrattach.domain;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Data
@@ -29,4 +29,15 @@ public class Theme {
 
     @OneToMany(mappedBy = "theme")
     private List<Order> orders;
+
+    @Override
+    public String toString() {
+        return "Theme{" +
+                "themeId=" + themeId +
+                ", themeName='" + themeName + '\'' +
+                ", department='" + department + '\'' +
+                ", faculty='" + faculty + '\'' +
+                ", year='" + year + '\'' +
+                '}';
+    }
 }

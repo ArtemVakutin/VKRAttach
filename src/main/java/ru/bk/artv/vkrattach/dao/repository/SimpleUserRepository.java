@@ -10,5 +10,4 @@ import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 @Repository
 public interface SimpleUserRepository extends JpaRepository<SimpleUser, Long>, JpaSpecificationExecutor<SimpleUser> {
 
-
 }

@@ -1,5 +1,9 @@
 package ru.bk.artv.vkrattach.services;
 
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import jakarta.validation.groups.Default;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,10 +24,6 @@ import ru.bk.artv.vkrattach.services.mappers.UserMapper;
 import ru.bk.artv.vkrattach.services.parsers.DocxParser;
 import ru.bk.artv.vkrattach.services.parsers.ExcelParser;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import javax.validation.groups.Default;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +34,7 @@ public class UploadService {
     ExcelParser excelParser;
     DocxParser docxParser;
     UserDao userDao;
+    UserService userService;
     LecturerDao lecturerDao;
     ThemesDao themesDao;
     PasswordEncoder passwordEncoder;
@@ -93,7 +94,7 @@ public class UploadService {
 
                     user.setRole(Role.USER);
                     user.setLogin(row.get(0));
-                    user.setPassword(passwordEncoder.encode(row.get(1)));
+                    user.setPassword(row.get(1));
                     user.setSurname(row.get(2));
                     user.setName(name);
                     user.setPatronymic(patronymic);
@@ -102,9 +103,9 @@ public class UploadService {
     }
 
     public void registerUploadUsers(List<UserToPatchDTO> usersDto) {
-        usersDto.stream().map(userDto -> userMapper.toDefaultUser(userDto)).forEach(user -> {
+        usersDto.stream().forEach(user -> {
             log.info("Try to register user : {}", user.toString());
-            userDao.saveUser(user);
+            userService.registerNewUser(user);
             log.info("User registered : {}", user.toString());
         });
     }
@@ -119,7 +120,7 @@ public class UploadService {
             theme.setThemeName(s);
             theme.setDepartment(department);
             theme.setFaculty(faculty);
-            theme.setYearOfRecruitment(year);
+            theme.setYear(year);
             return theme;
         }).collect(Collectors.toList());
         if (!themesDao.getThemesByDepartmentFacultyYearNoException(department, faculty, year).isEmpty()){

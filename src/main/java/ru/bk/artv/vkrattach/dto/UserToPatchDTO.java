@@ -1,14 +1,13 @@
 package ru.bk.artv.vkrattach.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import lombok.Data;
 import ru.bk.artv.vkrattach.services.validators.PasswordConstraint;
 import ru.bk.artv.vkrattach.domain.user.Role;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.groups.Default;
 
 @Data
 @JsonIgnoreProperties(value = { "password" }, allowSetters = true)
@@ -68,7 +67,7 @@ public class UserToPatchDTO {
 
     @NotBlank(groups = {UserToPatchDTO.ValidationStepForPatch.class,
             UserToPatchDTO.ValidationStepForRegister.class}, message = "Выберите год набора")
-    private String yearOfRecruitment;
+    private String year;
 
     //only for uploading answer
     //только для ответа на загрузку таблицами

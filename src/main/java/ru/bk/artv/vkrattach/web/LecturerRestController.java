@@ -1,5 +1,6 @@
 package ru.bk.artv.vkrattach.web;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -7,7 +8,6 @@ import ru.bk.artv.vkrattach.services.LecturerService;
 import ru.bk.artv.vkrattach.domain.Lecturer;
 import ru.bk.artv.vkrattach.dto.LecturerDTO;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j

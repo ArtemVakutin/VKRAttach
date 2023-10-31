@@ -1,7 +1,7 @@
 package ru.bk.artv.vkrattach.services.validators;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class PasswordConstraintValidator implements ConstraintValidator<PasswordConstraint, String> {
 

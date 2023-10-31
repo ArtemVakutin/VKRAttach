@@ -2,7 +2,6 @@ package ru.bk.artv.vkrattach.services.mappers;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.springframework.stereotype.Service;
 import ru.bk.artv.vkrattach.domain.Order;
@@ -29,7 +28,7 @@ public class ThemesMapper {
         themeDTO.setThemeName(theme.getThemeName());
         themeDTO.setDepartment(theme.getDepartment());
         themeDTO.setFaculty(theme.getFaculty());
-        themeDTO.setYearOfRecruitment(theme.getYear());
+        themeDTO.setYear(theme.getYear());
         if (theme.getOrders() != null && !theme.getOrders().isEmpty()) {
             List<Order> orders = theme.getOrders().stream().filter((order -> order.getOrderStatus() != Order.OrderStatus.REFUSED)).collect(Collectors.toList());
             if (orders.size() > 1) {
@@ -43,7 +42,7 @@ public class ThemesMapper {
         return themeDTO;
     }
 
-    public Theme toTheme(@MappingTarget Theme theme, ThemeDTO themeDTO) {
+    public Theme toTheme(Theme theme, ThemeDTO themeDTO) {
         return themesMapper.toTheme(theme, themeDTO);
     }
 

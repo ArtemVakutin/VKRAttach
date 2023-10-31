@@ -1,5 +1,7 @@
 package ru.bk.artv.vkrattach.services;
 
+import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
@@ -17,14 +19,11 @@ import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotPatchedException;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotSavedException;
 import ru.bk.artv.vkrattach.exceptions.UserNotAuthorizedException;
-import javax.validation.Valid;
-import javax.validation.groups.Default;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Validated
 public class UserService {
 
     UserMapper userMapper;
@@ -38,8 +37,7 @@ public class UserService {
     }
 
     @Transactional
-    @Validated({UserToPatchDTO.ValidationStepForRegister.class})
-    public Long registerNewUser(@Valid UserToPatchDTO request) {
+        public Long registerNewUser(UserToPatchDTO request) {
         log.info(request.toString());
 
         if (request.getId() != null){

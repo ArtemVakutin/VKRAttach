@@ -2,12 +2,12 @@ package ru.bk.artv.vkrattach.web;
 
 
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +17,7 @@ import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 import ru.bk.artv.vkrattach.services.DownloadService;
 import ru.bk.artv.vkrattach.services.utils.MapToStringUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Slf4j

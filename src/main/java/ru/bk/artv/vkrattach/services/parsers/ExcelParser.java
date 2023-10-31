@@ -63,7 +63,7 @@ public class ExcelParser {
             if (DateUtil.isCellDateFormatted(cell)) {
                 return cell.getDateCellValue().toString();
             } else {
-                return cell.getNumericCellValue() + "";
+                return (int)cell.getNumericCellValue() + "";
             }
         }
         if (cellType.equals(CellType.BOOLEAN)) {

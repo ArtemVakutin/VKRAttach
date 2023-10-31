@@ -1,10 +1,13 @@
 package ru.bk.artv.vkrattach.web;
 
-import com.turkraft.springfilter.boot.FilterSpecification;
+import com.turkraft.springfilter.boot.Filter;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.bk.artv.vkrattach.services.UserService;
 import ru.bk.artv.vkrattach.domain.user.Role;
@@ -20,6 +23,7 @@ import java.util.List;
 @RestController
 //@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RequestMapping(path = "/rest/user", produces = "application/json")
+@Validated
 public class UserRestController {
 
     UserService userService;
@@ -47,16 +51,17 @@ public class UserRestController {
 
     @GetMapping (path = "/getusers")
     public List<UserToClientDTO> getUsers(@RequestParam(name = "role", defaultValue = "USER") Role role,
-                                          @RequestParam(name = "filter", required = false) String filter) {
+                                          @Filter Specification<SimpleUser> filter) {
         if(role == Role.USER) {
-            return userService.findUsers(new FilterSpecification<SimpleUser>(filter));
+            return userService.findUsers(filter);
         }
         return userService.findUsers(role);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Long addUser(@RequestBody UserToPatchDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
+    @Validated({UserToPatchDTO.ValidationStepForRegister.class})
+    public Long addUser(@RequestBody @Valid UserToPatchDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
         log.info("AuthorizationRestController.registerUser() : " + userDTO);
         if (user == null && userDTO.getRole() == Role.USER || user != null && user.getRole() == Role.ADMIN){
             return userService.registerNewUser(userDTO);

@@ -3,6 +3,7 @@ drop table if exists vkr_lecturer;
 drop table if exists vkr_theme;
 drop table if exists vkr_user;
 drop table if exists vkr_config_data;
+drop table if exists vkr_deactivated_token;
 
 create table if not exists vkr_lecturer
 (
@@ -80,6 +81,12 @@ create table if not exists vkr_config_data
     config_deprecated boolean default false,
     PRIMARY KEY (config_id),
     CONSTRAINT config_data_unique UNIQUE (config_type, config_value)
+);
+
+create table vkr_deactivated_token
+(
+    id         uuid primary key,
+    keep_until timestamp not null check ( keep_until > now() )
 );
 
 

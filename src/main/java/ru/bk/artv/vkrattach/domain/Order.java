@@ -1,10 +1,10 @@
 package ru.bk.artv.vkrattach.domain;
 
 
+import jakarta.persistence.*;
 import lombok.Data;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data

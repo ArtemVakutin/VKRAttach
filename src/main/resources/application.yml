@@ -17,6 +17,12 @@ spring:
       enabled: true
       max-file-size: 1MB
       max-request-size: 10MB
+  web:
+    resources:
+      static-locations: classpath:/resources/templates/
+jwt:
+  access-token-key: '{"kty":"oct","k":"hi7S5RX5ZRZooHA0RKGctZ-KtR9FoESgCnH-3BNg5XI"}'
+  refresh-token-key: '{"kty":"oct","k":"956PBFst1FguLr5irJD-aQ"}'
 
 logging:
   file:
@@ -24,6 +30,8 @@ logging:
   level:
     ru.artv.bk.vkrattach: INFO
     org:
+      springframework:
+#        security: trace
       hibernate:
         SQL: debug
         type:

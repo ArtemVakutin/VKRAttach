@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface DefaultUserRepository extends JpaRepository<DefaultUser, Long> {
 
-    DefaultUser findByLogin(String login);
+    DefaultUser findByLoginIgnoreCase(String login);
     List<DefaultUser> findByRole(Role role);
     boolean existsByLogin(String login);
 

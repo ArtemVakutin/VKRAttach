@@ -8,7 +8,7 @@ public class ThemeDTO {
     private String themeName;
     private String department;
     private String faculty;
-    private String yearOfRecruitment;
+    private String year;
     private boolean isBusy;
 //    private OrderDTO order;
 
