@@ -3,10 +3,15 @@ package ru.bk.artv.vkrattach.web;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ru.bk.artv.vkrattach.domain.user.DefaultUser;
+import ru.bk.artv.vkrattach.domain.user.ModeratorUser;
+import ru.bk.artv.vkrattach.domain.user.SimpleUser;
+import ru.bk.artv.vkrattach.dto.LecturerDto;
+import ru.bk.artv.vkrattach.dto.LecturerFullDto;
 import ru.bk.artv.vkrattach.services.LecturerService;
 import ru.bk.artv.vkrattach.domain.Lecturer;
-import ru.bk.artv.vkrattach.dto.LecturerDTO;
 
 import java.util.List;
 
@@ -23,19 +28,28 @@ public class LecturerRestController {
 
     @GetMapping(path = "/getlecturers")
     @ResponseStatus(HttpStatus.OK)
-    public List<Lecturer> getLecturers(@RequestParam("department") String department) {
-        return lecturerService.getLecturers(department);
+    public List<LecturerDto> getLecturers(@RequestParam(value = "department", required = false) String department,
+                                          @RequestParam(value = "faculty", required = false) String faculty,
+                                          @RequestParam(value = "year", required = false) String year,
+                                          @AuthenticationPrincipal DefaultUser user) {
+
+        if (user instanceof ModeratorUser) {
+            department = ((ModeratorUser) user).getDepartment();
+        } else if (user instanceof SimpleUser) {
+            return lecturerService.getSimpleLecturers(department);
+        }
+        return lecturerService.getFullLecturers(department, faculty, year);
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
-    public LecturerDTO patchLecturer(@RequestBody @Valid LecturerDTO lecturer) {
+    public LecturerFullDto patchLecturer(@RequestBody @Valid LecturerFullDto lecturer) {
         return lecturerService.patchLecturer(lecturer);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public LecturerDTO putLecturer(@RequestBody @Valid LecturerDTO lecturer) {
+    public LecturerFullDto putLecturer(@RequestBody @Valid LecturerFullDto lecturer) {
         return lecturerService.putLecturer(lecturer);
     }
 

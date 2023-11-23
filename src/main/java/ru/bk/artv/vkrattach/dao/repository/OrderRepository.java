@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import ru.bk.artv.vkrattach.domain.Lecturer;
 import ru.bk.artv.vkrattach.domain.Order;
 import ru.bk.artv.vkrattach.domain.Theme;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
@@ -15,6 +16,9 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
     List<Order> findByUser(SimpleUser user);
+
+    List<Order> findByLecturer(Lecturer lecturer);
+
     boolean existsByIdAndUser(Long id, SimpleUser user);
 
     @Query("select ord from Order ord where ord.theme.department = :department and" +

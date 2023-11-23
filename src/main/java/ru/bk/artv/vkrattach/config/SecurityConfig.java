@@ -105,7 +105,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable);
 
-        http.apply(jwtAuthenticationConfigurer);
+//        http.apply(jwtAuthenticationConfigurer);
 
         return http.build();
     }

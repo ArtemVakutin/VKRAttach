@@ -4,8 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class LecturerDTO {
-
+public class LecturerDto {
 
     private Long id;
 
@@ -17,20 +16,6 @@ public class LecturerDTO {
 
     private String patronymic;
 
-    private String email;
-
-    private String telephone;
-
-    private String academicDegree;
-
-    private String academicTitle;
-
     @NotBlank(message = "Выберите кафедру")
     private String department;
-
-    private String rank;
-
-    private String exception;
-
 }
-

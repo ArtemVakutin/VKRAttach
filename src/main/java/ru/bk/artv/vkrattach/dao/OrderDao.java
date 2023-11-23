@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.bk.artv.vkrattach.dao.repository.OrderRepository;
+import ru.bk.artv.vkrattach.domain.Lecturer;
 import ru.bk.artv.vkrattach.domain.Order;
 import ru.bk.artv.vkrattach.domain.Theme;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
@@ -42,13 +43,19 @@ public class OrderDao {
         orderRepository.deleteById(id);
     }
 
-    public boolean isOrderExistsByIdAndUser(Long id, SimpleUser user) {
+
+    public boolean isOrderExists(Theme theme) {
+        return orderRepository.existsByTheme(theme);
+    }
+
+    public boolean isOrderExists(Long id, SimpleUser user) {
         return orderRepository.existsByIdAndUser(id, user);
     }
 
-    public boolean isOrderExistsByTheme(Theme theme) {
-        return orderRepository.existsByTheme(theme);
+    public List<Order> getOrders(Lecturer lecturer) {
+        return orderRepository.findByLecturer(lecturer);
     }
+
 
     public List<Order> getOrders(Specification<Order> spec) {
         List<Order> orders = orderRepository.findAll(spec);

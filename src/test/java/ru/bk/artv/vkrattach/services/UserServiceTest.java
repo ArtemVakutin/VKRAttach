@@ -4,9 +4,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.bk.artv.vkrattach.dto.UserDTO;
 import ru.bk.artv.vkrattach.services.mappers.UserMapper;
 import ru.bk.artv.vkrattach.domain.user.Role;
-import ru.bk.artv.vkrattach.dto.UserToPatchDTO;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +20,7 @@ class UserServiceTest {
     UserMapper userMapper;
     @Autowired
     UserService userService;
-    static UserToPatchDTO userDTO;
+    static UserDTO userDTO;
 
     @BeforeAll
     static void beforeAll() {

@@ -72,12 +72,22 @@ create table if not exists vkr_order
     FOREIGN KEY (order_theme) REFERENCES vkr_theme (theme_id) ON delete restrict
 );
 
+create table if not exists vkr_orders_max_count
+(
+    max_count_id         SERIAL,
+    max_count_faculty    varchar(30) not null,
+    max_count_department varchar(30) not null,
+    max_count_year       varchar(30) not null,
+    PRIMARY KEY (max_count_id),
+    CONSTRAINT config_data_unique UNIQUE (max_count_faculty, max_count_department, max_count_year)
+);
+
 create table if not exists vkr_config_data
 (
-    config_id    SERIAL,
-    config_type  varchar(30)  not null,
-    config_value varchar(100) not null,
-    config_label varchar(100) not null,
+    config_id         SERIAL,
+    config_type       varchar(30)  not null,
+    config_value      varchar(100) not null,
+    config_label      varchar(100) not null,
     config_deprecated boolean default false,
     PRIMARY KEY (config_id),
     CONSTRAINT config_data_unique UNIQUE (config_type, config_value)

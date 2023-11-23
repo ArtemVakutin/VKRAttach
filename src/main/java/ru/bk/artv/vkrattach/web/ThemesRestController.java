@@ -51,15 +51,13 @@ public class ThemesRestController {
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ThemeDTO addTheme(@RequestBody ThemeDTO themeDTO) {
-        themesService.addTheme(themeDTO);
         return themesService.addTheme(themeDTO);
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     public ThemeDTO patchTheme(@RequestBody ThemeDTO themeDTO) {
-        themesService.patchTheme(themeDTO);
-        return themesService.addTheme(themeDTO);
+        return themesService.patchTheme(themeDTO);
     }
 
 }

@@ -1,7 +1,11 @@
 package ru.bk.artv.vkrattach.web;
 
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -9,49 +13,44 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.bk.artv.vkrattach.services.UserService;
-import ru.bk.artv.vkrattach.domain.user.Role;
-import ru.bk.artv.vkrattach.dto.UserToClientDTO;
-import ru.bk.artv.vkrattach.dto.UserToPatchDTO;
 import ru.bk.artv.vkrattach.domain.user.DefaultUser;
+import ru.bk.artv.vkrattach.domain.user.Role;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
+import ru.bk.artv.vkrattach.dto.UserDTO;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotSavedException;
+import ru.bk.artv.vkrattach.services.UserService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
 //@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RequestMapping(path = "/rest/user", produces = "application/json")
-@Validated
+@AllArgsConstructor
 public class UserRestController {
 
     UserService userService;
-
-
-    public UserRestController(UserService userService) {
-        this.userService = userService;
-
-    }
+    Validator validator;
 
     @GetMapping
-    public UserToClientDTO getUser(@AuthenticationPrincipal DefaultUser user) {
+    public UserDTO getUser(@AuthenticationPrincipal DefaultUser user) {
         return userService.getUser(user);
     }
 
     @GetMapping(params = "id")
-    public UserToClientDTO getUser(@RequestParam Long id,@AuthenticationPrincipal DefaultUser user) {
+    public UserDTO getUser(@RequestParam Long id, @AuthenticationPrincipal DefaultUser user) {
         if (user.getRole()== Role.ADMIN ||user.getRole()== Role.MODERATOR) {
             return userService.getUser(id);
         } else {
             throw new AccessDeniedException("Access to id : " + id + " denied");
         }
-
     }
 
     @GetMapping (path = "/getusers")
-    public List<UserToClientDTO> getUsers(@RequestParam(name = "role", defaultValue = "USER") Role role,
-                                          @Filter Specification<SimpleUser> filter) {
+    public List<UserDTO> getUsers(@RequestParam(name = "role", defaultValue = "USER") Role role,
+                                  @Filter Specification<SimpleUser> filter) {
         if(role == Role.USER) {
             return userService.findUsers(filter);
         }
@@ -60,9 +59,10 @@ public class UserRestController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated({UserToPatchDTO.ValidationStepForRegister.class})
-    public Long addUser(@RequestBody @Valid UserToPatchDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
-        log.info("AuthorizationRestController.registerUser() : " + userDTO);
+    @Validated({UserDTO.ValidationForRegisterUser.class})
+    public UserDTO addUser(@RequestBody @Valid UserDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
+        validateNewUser(userDTO);
+
         if (user == null && userDTO.getRole() == Role.USER || user != null && user.getRole() == Role.ADMIN){
             return userService.registerNewUser(userDTO);
         } else {
@@ -70,15 +70,48 @@ public class UserRestController {
         }
     }
 
+    private void validateNewUser(UserDTO userDTO) {
+        Set<ConstraintViolation<UserDTO>> violations;
+        if (userDTO.getRole()==Role.USER) {
+            violations = validator.validate(userDTO, UserDTO.ValidationForRegisterUser.class, UserDTO.ValidationPassword.class);
+        } else if (userDTO.getRole()==Role.MODERATOR) {
+            violations = validator.validate(userDTO, UserDTO.ValidationForRegisterModerator.class, UserDTO.ValidationPassword.class);
+        } else {
+            violations = validator.validate(userDTO, UserDTO.ValidationForRegisterAdmin.class, UserDTO.ValidationPassword.class);
+        }
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException("UserDTO violation exception", violations);
+        }
+    }
+
     @PatchMapping(consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public void patchUser(@RequestBody UserToPatchDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
-        log.info("AuthorizationRestController.patchUser() : userDTO : " + userDTO + "||| User : " + user.getId()
-        + " with Login " + user.getLogin()+ " with Role " + user.getRole());
-        if (userDTO.getPassword() != "" && userDTO.getPassword() != null) {
-            userService.patchSimpleUserWithPassword(userDTO, user);
+    public UserDTO patchUser(@RequestBody UserDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
+        validatePatchUser(userDTO);
+        if (user.getRole().equals(Role.ADMIN)) {
+            return userService.patchUser(userDTO);
         } else {
-            userService.patchSimpleUser(userDTO, user);
+            return userService.patchUser(userDTO, user);
+        }
+    }
+
+    private void validatePatchUser(UserDTO userDTO) {
+        Set<ConstraintViolation<UserDTO>> violations;
+
+        if (userDTO.getRole()==Role.USER) {
+            violations = validator.validate(userDTO, UserDTO.ValidationForRegisterUser.class, UserDTO.ValidationId.class);
+        } else if (userDTO.getRole()==Role.MODERATOR) {
+            violations = validator.validate(userDTO, UserDTO.ValidationForRegisterModerator.class, UserDTO.ValidationId.class);
+        } else {
+            violations = validator.validate(userDTO, UserDTO.ValidationForRegisterAdmin.class, UserDTO.ValidationId.class);
+        }
+
+        if (userDTO.getPassword() != null && !userDTO.getPassword().isBlank()) {
+            violations.addAll(validator.validate(userDTO, UserDTO.ValidationPassword.class));
+        }
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException("UserDTO violation exception", violations);
         }
     }
 

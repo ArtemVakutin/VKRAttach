@@ -50,7 +50,6 @@ public class OrderRestController {
 
     //to do
     //Позволяет несколько раз делать заявки на неотклоненные ордеры
-
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDTO addOrder(@RequestBody OrderDTO orderDTO, @AuthenticationPrincipal DefaultUser user) {
@@ -58,15 +57,15 @@ public class OrderRestController {
         log.info(orderDTO.toString());
         if (user instanceof SimpleUser) {
             log.info(user.getClass().toString());
-            log.info(user.toString() + "    " + "SIMPLE USER");
+            log.info(user + "    " + "SIMPLE USER");
             orderService.addOrderByUser(orderDTO, (SimpleUser) user);
         } else if (user instanceof AdminUser) {
             orderService.addOrderByAdmin(orderDTO);
             log.info(user.getClass().toString());
-            log.info(user.toString() + "    " + "ADMIN USER");
+            log.info(user + "    " + "ADMIN USER");
         } else {
             log.info(user.getClass().toString());
-            log.info(user.toString() + "    " + "DEFAULT USER");
+            log.info(user + "    " + "DEFAULT USER");
         }
         return orderDTO;
     }

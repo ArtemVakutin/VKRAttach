@@ -12,7 +12,6 @@ import ru.bk.artv.vkrattach.domain.Theme;
 import ru.bk.artv.vkrattach.dto.ThemeDTO;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,7 +69,7 @@ public class ThemesService {
     public List<ThemeDTO> deleteThemes(String department, String faculty, String year) {
         List<ThemeDTO> themes = themesDao.getThemesByDepartmentFacultyYear(department, faculty, year)
                 .stream()
-                .filter(theme -> orderDao.isOrderExistsByTheme(theme))
+                .filter(theme -> orderDao.isOrderExists(theme))
                 .map(theme -> themesMapper.themeToThemeDTO(theme))
                 .collect(Collectors.toList());
         if (!themes.isEmpty()) {

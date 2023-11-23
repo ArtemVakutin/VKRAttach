@@ -13,10 +13,10 @@ import ru.bk.artv.vkrattach.dao.LecturerDao;
 import ru.bk.artv.vkrattach.dao.ThemesDao;
 import ru.bk.artv.vkrattach.dao.UserDao;
 import ru.bk.artv.vkrattach.domain.user.Role;
-import ru.bk.artv.vkrattach.dto.LecturerDTO;
+import ru.bk.artv.vkrattach.dto.LecturerFullDto;
 import ru.bk.artv.vkrattach.dto.ThemeDTO;
 import ru.bk.artv.vkrattach.dto.UploadAnswer;
-import ru.bk.artv.vkrattach.dto.UserToPatchDTO;
+import ru.bk.artv.vkrattach.dto.UserDTO;
 import ru.bk.artv.vkrattach.exceptions.UploadResourceException;
 import ru.bk.artv.vkrattach.services.mappers.LecturerMapper;
 import ru.bk.artv.vkrattach.services.mappers.ThemesMapper;
@@ -43,12 +43,19 @@ public class UploadService {
     LecturerMapper lecturerMapper;
     ThemesMapper themesMapper;
 
-    public UploadAnswer<UserToPatchDTO> checkUploadUsers(MultipartFile file, HttpSession session) {
+    public UploadAnswer<UserDTO> checkUploadUsers(MultipartFile file, HttpSession session, String faculty, String year, String group) {
         Map<Integer, List<String>> excelMap = excelParser.parseXls(file);
-        List<UserToPatchDTO> simpleUsers = excelMapToUsersList(excelMap);
+        List<UserDTO> simpleUsers = excelMapToUsersList(excelMap);
+
+        simpleUsers.forEach(user -> {
+            user.setFaculty(faculty);
+            user.setYear(year);
+            user.setGroup(group);
+        });
+
         String id = "";
 
-        List<UserToPatchDTO> errorAnswerList = simpleUsers.stream()
+        List<UserDTO> errorAnswerList = simpleUsers.stream()
                 .filter(user -> {
                     String validate = validateUser(user);
                     if (userDao.checkLoginExisted(user.getLogin())) {
@@ -65,29 +72,29 @@ public class UploadService {
 
         simpleUsers.removeAll(errorAnswerList);
 
-        log.info("In session object is : {}:", simpleUsers.stream().map(UserToPatchDTO::toString).collect(Collectors.joining(" ")));
+        log.info("In session object is : {}:", simpleUsers.stream().map(UserDTO::toString).collect(Collectors.joining(" ")));
         if (!simpleUsers.isEmpty()) {
             id = ((long) (Math.random() * 10000000)) + "";
             session.setAttribute(id, simpleUsers);
         }
 
-        return new UploadAnswer<UserToPatchDTO>(id, simpleUsers, errorAnswerList);
+        return new UploadAnswer<UserDTO>(id, simpleUsers, errorAnswerList);
     }
 
-    private String validateUser(UserToPatchDTO user) {
-        Set<ConstraintViolation<UserToPatchDTO>> validate = validator.validate(user, Default.class);
+    private String validateUser(UserDTO user) {
+        Set<ConstraintViolation<UserDTO>> validate = validator.validate(user, Default.class);
         if (validate.isEmpty()) {
             return "";
         }
         return validate.stream().map(ConstraintViolation::getMessageTemplate).collect(Collectors.joining("; "));
     }
 
-    private List<UserToPatchDTO> excelMapToUsersList(Map<Integer, List<String>> excelMap) {
+    private List<UserDTO> excelMapToUsersList(Map<Integer, List<String>> excelMap) {
         return excelMap.keySet().stream()
                 .filter(integer -> !excelMap.get(integer).get(0).equals("username"))
                 .map(key -> {
                     List<String> row = excelMap.get(key);
-                    UserToPatchDTO user = new UserToPatchDTO();
+                    UserDTO user = new UserDTO();
                     String[] s = row.get(3).trim().split(" ");
                     String name = s[0].trim();
                     String patronymic = s.length > 1 ? s[1].trim() : "";
@@ -102,7 +109,7 @@ public class UploadService {
                 }).collect(Collectors.toList());
     }
 
-    public void registerUploadUsers(List<UserToPatchDTO> usersDto) {
+    public void registerUploadUsers(List<UserDTO> usersDto) {
         usersDto.stream().forEach(user -> {
             log.info("Try to register user : {}", user.toString());
             userService.registerNewUser(user);
@@ -134,12 +141,12 @@ public class UploadService {
         return new UploadAnswer<ThemeDTO>(id, themes, new ArrayList<>());
     }
 
-    public UploadAnswer<LecturerDTO> checkUploadLecturers(MultipartFile file, HttpSession session, String department) {
+    public UploadAnswer<LecturerFullDto> checkUploadLecturers(MultipartFile file, HttpSession session, String department) {
         Map<Integer, List<String>> excelMap = excelParser.parseXls(file);
-        List<LecturerDTO> lecturers = excelMapToLecturersList(excelMap, department);
+        List<LecturerFullDto> lecturers = excelMapToLecturersList(excelMap, department);
         String id = "";
 
-        List<LecturerDTO> errorAnswerList = lecturers.stream()
+        List<LecturerFullDto> errorAnswerList = lecturers.stream()
                 .filter(lecturer -> {
                     String validate = validateLecturer(lecturer);
                     if (lecturerDao.checkLecturerIsExisted(lecturerMapper.toLecturer(lecturer))) {
@@ -155,29 +162,29 @@ public class UploadService {
 
         lecturers.removeAll(errorAnswerList);
 
-        log.info("In session object is : {}:", lecturers.stream().map(LecturerDTO::toString).collect(Collectors.joining(" ")));
+        log.info("In session object is : {}:", lecturers.stream().map(LecturerFullDto::toString).collect(Collectors.joining(" ")));
         if (!lecturers.isEmpty()) {
             id = ((long) (Math.random() * 10000000)) + "";
             session.setAttribute(id, lecturers);
         }
 
-        return new UploadAnswer<LecturerDTO>(id, lecturers, errorAnswerList);
+        return new UploadAnswer<LecturerFullDto>(id, lecturers, errorAnswerList);
     }
 
-    private String validateLecturer(LecturerDTO lecturer) {
-        Set<ConstraintViolation<LecturerDTO>> validate = validator.validate(lecturer, Default.class);
+    private String validateLecturer(LecturerFullDto lecturer) {
+        Set<ConstraintViolation<LecturerFullDto>> validate = validator.validate(lecturer, Default.class);
         if (validate.isEmpty()) {
             return "";
         }
         return validate.stream().map(ConstraintViolation::getMessageTemplate).collect(Collectors.joining("; "));
     }
 
-    private List<LecturerDTO> excelMapToLecturersList(Map<Integer, List<String>> excelMap, String department) {
+    private List<LecturerFullDto> excelMapToLecturersList(Map<Integer, List<String>> excelMap, String department) {
         return excelMap.keySet().stream()
                 .filter(integer -> !excelMap.get(integer).get(0).toUpperCase().equals("ФАМИЛИЯ"))
                 .map(key -> {
                     List<String> row = excelMap.get(key);
-                    LecturerDTO lecturer = new LecturerDTO();
+                    LecturerFullDto lecturer = new LecturerFullDto();
                     String[] s = row.get(1).trim().split(" ");
                     String name = s[0].trim();
                     String patronymic = s.length > 1 ? s[1].trim() : "";
@@ -191,7 +198,7 @@ public class UploadService {
                 }).collect(Collectors.toList());
     }
 
-    public void registerUploadLecturers(List<LecturerDTO> lecturers) {
+    public void registerUploadLecturers(List<LecturerFullDto> lecturers) {
         lecturers.stream().map(lecturer -> lecturerMapper.toLecturer(lecturer))
                 .forEach(lecturer -> lecturerDao.saveLecturer(lecturer));
     }

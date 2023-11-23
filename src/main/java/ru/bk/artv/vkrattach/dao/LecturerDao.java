@@ -15,7 +15,20 @@ public class LecturerDao {
         this.lecturerRepository = lecturerRepository;
     }
 
-    public List<Lecturer> getLecturersByDepartment(String department) {
+    public List<Lecturer> getLecturers(String department) {
+        try {
+            List<Lecturer> lecturerByDepartment = lecturerRepository.getLecturerByDepartment(department);
+            if (lecturerByDepartment.size() > 0) {
+                return lecturerByDepartment;
+            }
+            throw new ResourceNotFoundException("Lecturers from Department : " + department + " are not found");
+        } catch (IllegalArgumentException e) {
+            throw new ResourceNotFoundException("No enum constant : " +
+                    department + " : in ru.bk.artv.vkrattach.domain.Department");
+        }
+    }
+
+    public List<Lecturer> getLecturers(String department, String faculty, String year) {
         try {
             List<Lecturer> lecturerByDepartment = lecturerRepository.getLecturerByDepartment(department);
             if (lecturerByDepartment.size() > 0) {

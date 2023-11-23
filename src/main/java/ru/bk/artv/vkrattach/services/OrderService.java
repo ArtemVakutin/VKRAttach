@@ -48,7 +48,7 @@ public class OrderService {
                     }).collect(Collectors.toList());
 
         }
-        SimpleUser userById = (SimpleUser)userDao.findUserById(id);
+        SimpleUser userById = (SimpleUser) userDao.findUserById(id);
         return orderDao.getOrdersByUser(userById)
                 .stream()
                 .map(order -> {
@@ -99,7 +99,7 @@ public class OrderService {
         if (user.getRole().equals(Role.ADMIN)) {
             orderDao.deleteOrder(id);
         } else if (user.getRole().equals(Role.USER)) {
-            if (orderDao.isOrderExistsByIdAndUser(id, (SimpleUser) user)) {
+            if (orderDao.isOrderExists(id, (SimpleUser) user)) {
                 orderDao.deleteOrder(id);
             } else {
                 throw new ResourceNotFoundException("Order with id :" + id
@@ -114,9 +114,30 @@ public class OrderService {
         final Long id = orderDTO.getId();
         Order order = orderDao.getOrder(orderDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id: " + id + " is not found"));
+        checkPatchingOrder(orderDTO, order);
+
+
         orderMapper.DTOtoOrder(orderDTO, order);
         orderDao.addOrder(order);
         orderMapper.orderToDTO(order, orderDTO);
+    }
+
+    private void checkPatchingOrder(OrderDTO orderDTO, Order order) {
+
+        if (orderDTO.getRequestStatus() == Order.OrderStatus.ACCEPTED && orderDTO.getLecturerId() == null) {
+            orderDTO.setRequestStatus(Order.OrderStatus.UNDER_CONSIDERATION);
+            return;
+        }
+
+        if (orderDTO.getRequestStatus() != Order.OrderStatus.ACCEPTED
+                && order.getOrderStatus()== Order.OrderStatus.ACCEPTED) {
+            orderDTO.setLecturerId(null);
+            return;
+        }
+
+        if (orderDTO.getLecturerId() != null)  {
+            orderDTO.setRequestStatus(Order.OrderStatus.ACCEPTED);
+        }
     }
 
     public List<OrderDTO> getOrders(Specification<Order> spec) {

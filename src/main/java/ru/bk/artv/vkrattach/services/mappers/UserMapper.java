@@ -3,18 +3,13 @@ package ru.bk.artv.vkrattach.services.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import ru.bk.artv.vkrattach.domain.user.Role;
-import ru.bk.artv.vkrattach.dto.UserToClientDTO;
-import ru.bk.artv.vkrattach.dto.UserToPatchDTO;
-import ru.bk.artv.vkrattach.domain.user.AdminUser;
-import ru.bk.artv.vkrattach.domain.user.DefaultUser;
-import ru.bk.artv.vkrattach.domain.user.ModeratorUser;
-import ru.bk.artv.vkrattach.domain.user.SimpleUser;
+import ru.bk.artv.vkrattach.domain.user.*;
+import ru.bk.artv.vkrattach.dto.UserDTO;
 
 @Mapper(componentModel = "spring")
 public abstract class UserMapper {
 
-    public DefaultUser toDefaultUser(UserToPatchDTO request) {
+    public DefaultUser toDefaultUser(UserDTO request) {
         if (request.getRole() == Role.ADMIN) {
             return toAdminUser(request);
         } else if (request.getRole() == Role.MODERATOR) {
@@ -23,7 +18,7 @@ public abstract class UserMapper {
         return toSimpleUser(request);
     }
 
-    public DefaultUser toDefaultUser(UserToPatchDTO request, DefaultUser defaultUser) {
+    public DefaultUser toDefaultUser(UserDTO request, DefaultUser defaultUser) {
         if (request.getRole() == Role.ADMIN) {
             return toAdminUser(request, (AdminUser) defaultUser);
         } else if (request.getRole() == Role.MODERATOR) {
@@ -32,22 +27,22 @@ public abstract class UserMapper {
         return toSimpleUser(request, (SimpleUser) defaultUser);
     }
 
-    abstract SimpleUser toSimpleUser(UserToPatchDTO request);
+    abstract SimpleUser toSimpleUser(UserDTO request);
 
     @Mapping(target = "password", ignore = true)
-    abstract SimpleUser toSimpleUser(UserToPatchDTO request, @MappingTarget SimpleUser user);
+    abstract SimpleUser toSimpleUser(UserDTO request, @MappingTarget SimpleUser user);
 
-    abstract ModeratorUser toModeratorUser(UserToPatchDTO request);
-
-    @Mapping(target = "password", ignore = true)
-    abstract ModeratorUser toModeratorUser(UserToPatchDTO request, @MappingTarget ModeratorUser user);
-
-    abstract AdminUser toAdminUser(UserToPatchDTO request);
+    abstract ModeratorUser toModeratorUser(UserDTO request);
 
     @Mapping(target = "password", ignore = true)
-    abstract AdminUser toAdminUser(UserToPatchDTO request, @MappingTarget AdminUser user);
+    abstract ModeratorUser toModeratorUser(UserDTO request, @MappingTarget ModeratorUser user);
 
-    public UserToClientDTO toUserDTO(DefaultUser user) {
+    abstract AdminUser toAdminUser(UserDTO request);
+
+    @Mapping(target = "password", ignore = true)
+    abstract AdminUser toAdminUser(UserDTO request, @MappingTarget AdminUser user);
+
+    public UserDTO toUserDTO(DefaultUser user) {
         if (user instanceof SimpleUser) {
             return UserDTOFromSimpleUser((SimpleUser) user);
         } else if (user instanceof ModeratorUser) {
@@ -57,11 +52,11 @@ public abstract class UserMapper {
 
     }
 
-    abstract UserToClientDTO UserDTOFromDefaultUser(DefaultUser defaultUser);
+    abstract UserDTO UserDTOFromDefaultUser(DefaultUser defaultUser);
 
-    abstract UserToClientDTO UserDTOFromModeratorUser(ModeratorUser defaultUser);
+    abstract UserDTO UserDTOFromModeratorUser(ModeratorUser defaultUser);
 
-    abstract UserToClientDTO UserDTOFromSimpleUser(SimpleUser defaultUser);
+    abstract UserDTO UserDTOFromSimpleUser(SimpleUser defaultUser);
 
 
 }
