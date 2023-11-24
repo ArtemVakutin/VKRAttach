@@ -1,4 +1,4 @@
-package ru.bk.artv.vkrattach.authentication;
+package ru.bk.artv.vkrattach.config.security.auth;
 
 import java.time.Instant;
 import java.util.List;

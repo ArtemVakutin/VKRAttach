@@ -1,5 +1,4 @@
-package ru.bk.artv.vkrattach.authentication;
-
+package ru.bk.artv.vkrattach.config.security.auth;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,7 +24,7 @@ public class TokenAuthenticationUserDetailsService
         if (authenticationToken.getPrincipal() instanceof Token token) {
             return new TokenUser(token.subject(), "nopassword", true, true,
                     !this.jdbcTemplate.queryForObject("""
-                            select exists(select id from vkr_deactivated_token where id = ?)
+                            select exists(select id from t_deactivated_token where id = ?)
                             """, Boolean.class, token.id()) &&
                             token.expiresAt().isAfter(Instant.now()),
                     true,

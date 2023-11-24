@@ -55,7 +55,17 @@ public class OrderMapper {
         }
     }
 
-    public void orderToDTO(Order order, OrderDTO orderDTO) {
+    public OrderDTO orderToDTO(Order order, OrderDTO orderDTO) {
+        orderToDtoMapper(order, orderDTO);
+        return orderDTO;
+    }
+    public OrderDTO orderToDTO(Order order) {
+        OrderDTO orderDTO = new OrderDTO();
+        orderToDtoMapper(order, orderDTO);
+        return orderDTO;
+    }
+    private void orderToDtoMapper(Order order, OrderDTO orderDTO) {
+
         orderDTO.setId(order.getId());
         if (order.getUser() != null) {
             orderDTO.setUserId(order.getUser().getId());
@@ -82,4 +92,5 @@ public class OrderMapper {
 
         orderDTO.setRequestStatus(order.getOrderStatus());
     }
+
 }

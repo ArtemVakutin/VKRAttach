@@ -1,10 +1,12 @@
 package ru.bk.artv.vkrattach.web;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ru.bk.artv.vkrattach.config.security.auth.TokenUser;
 import ru.bk.artv.vkrattach.domain.user.DefaultUser;
 import ru.bk.artv.vkrattach.domain.user.ModeratorUser;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
@@ -14,25 +16,25 @@ import ru.bk.artv.vkrattach.services.LecturerService;
 import ru.bk.artv.vkrattach.domain.Lecturer;
 
 import java.util.List;
+import java.util.function.Function;
 
 @Slf4j
 @RestController
 @RequestMapping(path = "rest/lecturer")
+@AllArgsConstructor
 public class LecturerRestController {
 
     LecturerService lecturerService;
+    Function<TokenUser, DefaultUser> converter;
 
-    public LecturerRestController(LecturerService lecturerService) {
-        this.lecturerService = lecturerService;
-    }
 
     @GetMapping(path = "/getlecturers")
     @ResponseStatus(HttpStatus.OK)
     public List<LecturerDto> getLecturers(@RequestParam(value = "department", required = false) String department,
                                           @RequestParam(value = "faculty", required = false) String faculty,
                                           @RequestParam(value = "year", required = false) String year,
-                                          @AuthenticationPrincipal DefaultUser user) {
-
+                                          @AuthenticationPrincipal TokenUser tokenUser) {
+        DefaultUser user = converter.apply(tokenUser);
         if (user instanceof ModeratorUser) {
             department = ((ModeratorUser) user).getDepartment();
         } else if (user instanceof SimpleUser) {

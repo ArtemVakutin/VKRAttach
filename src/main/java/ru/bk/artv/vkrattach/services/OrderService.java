@@ -41,36 +41,28 @@ public class OrderService {
         if (user instanceof SimpleUser) {
             return orderDao.getOrdersByUser((SimpleUser) user)
                     .stream()
-                    .map(order -> {
-                        OrderDTO orderDTO = new OrderDTO();
-                        orderMapper.orderToDTO(order, orderDTO);
-                        return orderDTO;
-                    }).collect(Collectors.toList());
+                    .map(order -> orderMapper.orderToDTO(order))
+                    .collect(Collectors.toList());
 
         }
         SimpleUser userById = (SimpleUser) userDao.findUserById(id);
         return orderDao.getOrdersByUser(userById)
                 .stream()
-                .map(order -> {
-                    OrderDTO orderDTO = new OrderDTO();
-                    orderMapper.orderToDTO(order, orderDTO);
-                    return orderDTO;
-                }).collect(Collectors.toList());
+                .map(order -> orderMapper.orderToDTO(order)).collect(Collectors.toList());
     }
 
     @Transactional
-    public void addOrderByAdmin(OrderDTO orderDTO) {
+    public OrderDTO addOrderByAdmin(OrderDTO orderDTO) {
         SimpleUser userById = (SimpleUser) userDao.findUserById(orderDTO.getUserId());
-        addOrder(orderDTO, userById);
+        return addOrder(orderDTO, userById);
     }
 
     @Transactional
-    public void addOrderByUser(OrderDTO orderDTO, SimpleUser user) {
-        addOrder(orderDTO, user);
+    public OrderDTO addOrderByUser(OrderDTO orderDTO, SimpleUser user) {
+        return addOrder(orderDTO, user);
     }
 
-    private void addOrder(OrderDTO orderDTO, SimpleUser user) {
-        log.info(orderDTO.toString());
+    private OrderDTO addOrder(OrderDTO orderDTO, SimpleUser user) {
         try {
             orderDao.getOrdersByUser(user).stream().forEach(order -> {
                 if (order.getOrderStatus() == Order.OrderStatus.ACCEPTED) {
@@ -89,10 +81,8 @@ public class OrderService {
         orderMapper.DTOtoOrder(orderDTO, order);
         order.setRequestDate(LocalDate.now());
         orderDao.addOrder(order);
-        orderMapper.orderToDTO(order, orderDTO);
-        log.info("После метода");
-        log.info(order.toString());
-        log.info(orderDTO.toString());
+        return orderMapper.orderToDTO(order);
+
     }
 
     public void deleteOrders(Long id, DefaultUser user) {
@@ -130,12 +120,12 @@ public class OrderService {
         }
 
         if (orderDTO.getRequestStatus() != Order.OrderStatus.ACCEPTED
-                && order.getOrderStatus()== Order.OrderStatus.ACCEPTED) {
+                && order.getOrderStatus() == Order.OrderStatus.ACCEPTED) {
             orderDTO.setLecturerId(null);
             return;
         }
 
-        if (orderDTO.getLecturerId() != null)  {
+        if (orderDTO.getLecturerId() != null) {
             orderDTO.setRequestStatus(Order.OrderStatus.ACCEPTED);
         }
     }

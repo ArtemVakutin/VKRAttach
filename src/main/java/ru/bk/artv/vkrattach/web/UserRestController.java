@@ -1,6 +1,7 @@
 package ru.bk.artv.vkrattach.web;
 
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.persistence.Converter;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -13,16 +14,20 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.bk.artv.vkrattach.config.security.auth.TokenUser;
 import ru.bk.artv.vkrattach.domain.user.DefaultUser;
 import ru.bk.artv.vkrattach.domain.user.Role;
 import ru.bk.artv.vkrattach.domain.user.SimpleUser;
 import ru.bk.artv.vkrattach.dto.UserDTO;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotSavedException;
+import ru.bk.artv.vkrattach.services.TokenUserToDefaultUserConverter;
 import ru.bk.artv.vkrattach.services.UserService;
+import ru.bk.artv.vkrattach.services.mappers.UserMapper;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 @Slf4j
 @RestController
@@ -31,16 +36,20 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserRestController {
 
+    UserMapper userMapper;
+    Function<TokenUser, DefaultUser> converter;
     UserService userService;
     Validator validator;
 
     @GetMapping
-    public UserDTO getUser(@AuthenticationPrincipal DefaultUser user) {
-        return userService.getUser(user);
+    public UserDTO getUser(@AuthenticationPrincipal TokenUser user) {
+        DefaultUser defaultUser = converter.apply(user);
+        return userMapper.toUserDTO(defaultUser);
     }
 
     @GetMapping(params = "id")
-    public UserDTO getUser(@RequestParam Long id, @AuthenticationPrincipal DefaultUser user) {
+    public UserDTO getUser(@RequestParam Long id, @AuthenticationPrincipal TokenUser tokenUser) {
+        DefaultUser user = converter.apply(tokenUser);
         if (user.getRole()== Role.ADMIN ||user.getRole()== Role.MODERATOR) {
             return userService.getUser(id);
         } else {
@@ -60,7 +69,8 @@ public class UserRestController {
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Validated({UserDTO.ValidationForRegisterUser.class})
-    public UserDTO addUser(@RequestBody @Valid UserDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
+    public UserDTO addUser(@RequestBody @Valid UserDTO userDTO, @AuthenticationPrincipal TokenUser tokenUser) {
+        DefaultUser user = converter.apply(tokenUser);
         validateNewUser(userDTO);
 
         if (user == null && userDTO.getRole() == Role.USER || user != null && user.getRole() == Role.ADMIN){
@@ -86,7 +96,8 @@ public class UserRestController {
 
     @PatchMapping(consumes = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO patchUser(@RequestBody UserDTO userDTO, @AuthenticationPrincipal DefaultUser user) {
+    public UserDTO patchUser(@RequestBody UserDTO userDTO, @AuthenticationPrincipal TokenUser tokenUser) {
+        DefaultUser user = converter.apply(tokenUser);
         validatePatchUser(userDTO);
         if (user.getRole().equals(Role.ADMIN)) {
             return userService.patchUser(userDTO);
@@ -117,8 +128,8 @@ public class UserRestController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteUser(@RequestParam(name = "id") Long userId, @AuthenticationPrincipal DefaultUser user) {
-        log.info("AuthorizationRestController.deleteUser() : " + userId + " by " + user.getLogin());
+    public void deleteUser(@RequestParam(name = "id") Long userId, @AuthenticationPrincipal TokenUser tokenUser) {
+        DefaultUser user = converter.apply(tokenUser);
         if (user.getRole() == Role.ADMIN && user.getId() != userId) {
             userService.deleteUser(userId);
         } else {

@@ -31,15 +31,6 @@ ConfigDataService configDataService;
 
     @GetMapping
     public Map<ConfigData.ConfigType, List<ConfigData>> getDomainData(HttpServletResponse response) {
-
-        Cookie cookie = new Cookie("token", "111111111111111111111111");
-        cookie.setPath("/");//проверить
-//        cookie.setDomain("localhost");
-        cookie.setHttpOnly(false);
-        cookie.setSecure(true);
-        cookie.setMaxAge((int) ChronoUnit.SECONDS.between(Instant.now(), Instant.now().plus(Duration.ofDays(1))));
-
-        response.addCookie(cookie);
         return configDataService.getDomainData();
     }
 }

@@ -1,18 +1,17 @@
-package ru.bk.artv.vkrattach.authentication;
+package ru.bk.artv.vkrattach.config.security.auth;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.function.Function;
 
-/**
- * Сериализует из класса в рефреш токен с шифрованием полезной нагрузки
- */
-@Slf4j
-public class RefreshTokenJweStringSerializer implements Function<Token, String> {
+public class TokenCookieJweStringSerializer implements Function<Token, String> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenCookieJweStringSerializer.class);
 
     private final JWEEncrypter jweEncrypter;
 
@@ -20,11 +19,11 @@ public class RefreshTokenJweStringSerializer implements Function<Token, String> 
 
     private EncryptionMethod encryptionMethod = EncryptionMethod.A128GCM;
 
-    public RefreshTokenJweStringSerializer(JWEEncrypter jweEncrypter) {
+    public TokenCookieJweStringSerializer(JWEEncrypter jweEncrypter) {
         this.jweEncrypter = jweEncrypter;
     }
 
-    public RefreshTokenJweStringSerializer(JWEEncrypter jweEncrypter, JWEAlgorithm jweAlgorithm, EncryptionMethod encryptionMethod) {
+    public TokenCookieJweStringSerializer(JWEEncrypter jweEncrypter, JWEAlgorithm jweAlgorithm, EncryptionMethod encryptionMethod) {
         this.jweEncrypter = jweEncrypter;
         this.jweAlgorithm = jweAlgorithm;
         this.encryptionMethod = encryptionMethod;
@@ -48,7 +47,7 @@ public class RefreshTokenJweStringSerializer implements Function<Token, String> 
 
             return encryptedJWT.serialize();
         } catch (JOSEException exception) {
-            log.error(exception.getMessage(), exception);
+            LOGGER.error(exception.getMessage(), exception);
         }
 
         return null;
