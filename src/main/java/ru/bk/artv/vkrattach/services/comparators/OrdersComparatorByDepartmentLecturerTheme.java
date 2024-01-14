@@ -1,6 +1,6 @@
 package ru.bk.artv.vkrattach.services.comparators;
 
-import ru.bk.artv.vkrattach.domain.Order;
+import ru.bk.artv.vkrattach.services.model.Order;
 
 import java.util.Comparator;
 

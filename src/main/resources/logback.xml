@@ -9,6 +9,8 @@
         </encoder>
     </appender>
 
+
+
 <!--    <appender name="SENTRY" class="io.sentry.logback.SentryAppender">-->
 <!--        <minimumEventLevel>WARN</minimumEventLevel>-->
 <!--    </appender>-->
@@ -48,9 +50,21 @@
 
     <root level="info">
         <appender-ref ref="STDOUT" />
+
+
 <!--        <appender-ref ref="JsonRollingFile" />-->
 <!--        <appender-ref ref="stash" />-->
         <!--        <appender-ref ref="SENTRY" />-->
         <!--        <appender-ref ref="JsonRollingFile" />-->
     </root>
+
+<!--    <logger name="ru.bk.artv.vkrattach.config" level="TRACE">-->
+<!--        <appender-ref ref="STDOUT" />-->
+<!--    </logger>-->
+<!--    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">-->
+<!--        <level value="DEBUG" />-->
+<!--    </logger>-->
+    <logger name="ru.bk.artv.vkrattach.config.logging">
+        <level value="DEBUG" />
+    </logger>
 </configuration>

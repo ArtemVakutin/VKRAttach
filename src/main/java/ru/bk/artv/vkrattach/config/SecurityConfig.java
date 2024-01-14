@@ -1,133 +1,99 @@
 package ru.bk.artv.vkrattach.config;
 
+import jakarta.annotation.Priority;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
+import ru.bk.artv.vkrattach.config.logging.RequestLoggingFilter;
+import ru.bk.artv.vkrattach.config.security.JwtLogoutFilter;
+import ru.bk.artv.vkrattach.config.security.RefreshTokenFilter;
+import ru.bk.artv.vkrattach.config.security.TokenAuthenticationFilter;
 
-//@Configuration
-//@EnableWebSecurity
+import java.util.Arrays;
+import java.util.List;
+
+
+/**
+ * SecurityFilterChain для JWT аутентификации Access и Refresh токенами
+ */
+@EnableMethodSecurity(securedEnabled = true)
+@Configuration
+//@Priority(2)
 public class SecurityConfig {
 
-//    @Bean
-//    public UserDetailsService userDetailsService(DefaultUserRepository repo) {
-//        return login -> {
-//            DefaultUser user = repo.findByLoginIgnoreCase((login.toUpperCase()));
-//            if (user != null) {
-//                return user;
-//            }
-//            throw new UsernameNotFoundException("User : " + login + " not found");
-//        };
-//    }
+    @Bean
+    @Order(2)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   TokenAuthenticationFilter tokenAuthenticationFilter,
+                                                   RefreshTokenFilter refreshTokenFilter,
+                                                   JwtLogoutFilter jwtLogoutFilter,
+                                                   RequestLoggingFilter requestLoggingFilter) throws Exception {
 
-//    @Bean
-//    @Profile("prod")
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//        return http.build();
-//    }
-
-//    @Bean
-//    public JwtAuthenticationConfigurer jwtAuthenticationConfigurer(
-//            @Value("${jwt.access-token-key}") String accessTokenKey,
-//            @Value("${jwt.refresh-token-key}") String refreshTokenKey,
-//            JdbcTemplate jdbcTemplate
-//    ) throws ParseException, JOSEException {
-//        return new JwtAuthenticationConfigurer()
-//                .accessTokenStringSerializer(new AccessTokenJwsStringSerializer(
-//                        new MACSigner(OctetSequenceKey.parse(accessTokenKey))
-//                ))
-//                .refreshTokenStringSerializer(new RefreshTokenJweStringSerializer(
-//                        new DirectEncrypter(OctetSequenceKey.parse(refreshTokenKey))
-//                ))
-//                .accessTokenStringDeserializer(new AccessTokenJwsStringDeserializer(
-//                        new MACVerifier(OctetSequenceKey.parse(accessTokenKey))
-//                ))
-//                .refreshTokenStringDeserializer(new RefreshTokenJweStringDeserializer(
-//                        new DirectDecrypter(OctetSequenceKey.parse(refreshTokenKey))
-//                ))
-//                .jdbcTemplate(jdbcTemplate);
-//    }
-
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        return http
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/**").permitAll()
-//                        .requestMatchers("/rest/domain").permitAll()
-//                        .requestMatchers("/rest/user").authenticated()
-//                        .anyRequest().permitAll())
-//
-//                .cors(Customizer.withDefaults())
-//                .formLogin(form -> form.loginProcessingUrl("/process_login").successHandler(new SuccessHandler()))
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .build();
-//    }
-//    @Bean
-//    public SecurityFilterChain devFilterChain(HttpSecurity http,
-//                                              JwtAuthenticationConfigurer jwtAuthenticationConfigurer,
-//                                              CorsConfigurationSource corsConfigurationSource) throws Exception {
-//        http
-//                .httpBasic(Customizer.withDefaults())
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/**").permitAll()
-//                        .requestMatchers("/rest/domain").permitAll()
-//                        .requestMatchers("/rest/user").authenticated()
-//                        .anyRequest().permitAll())
-////                .sessionManagement(sessionManagement -> sessionManagement
-////                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .cors(Customizer.withDefaults())
-//                .csrf(AbstractHttpConfigurer::disable);
-//
-////        http.apply(jwtAuthenticationConfigurer);
-//
-//        return http.build();
-//    }
-
-//    @Bean
-//    public TomcatContextCustomizer sameSiteCookiesConfig() {
-//        return context -> {
-//            final Rfc6265CookieProcessor cookieProcessor = new Rfc6265CookieProcessor();
-//            cookieProcessor.setSameSiteCookies(SameSiteCookies.NONE.getValue());
-//            context.setCookieProcessor(cookieProcessor);
-//        };
-//    }
-
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "chrome-extension://coohjcphdfgbiolnekdpbcijmhambjff"));
-//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
-//        configuration.setAllowedHeaders(List.of("*"));
-//        configuration.setExposedHeaders(List.of("*"));
-//        configuration.setAllowCredentials(true);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
-
-//    @Bean
-//    public ServletWebServerFactory servletContainer() {
-//        return new TomcatServletWebServerFactory() {
-//            @Override
-//            protected void postProcessContext(Context context) {
-//                Rfc6265CookieProcessor rfc6265Processor = new Rfc6265CookieProcessor();
-//                rfc6265Processor.setSameSiteCookies("None");
-//                context.setCookieProcessor(rfc6265Processor);
-//            }
-//        };
-//    }
-
-//    @Bean
-//    public String testPass(PasswordEncoder passwordEncoder){
-//        String encode = passwordEncoder.encode("11111");
-//        System.out.println("1111111111111111111111111111111111111111111111111111111111111111111111");
-//        System.out.println(encode);
-//        return "111";
-//    }
+        return http
+                .authorizeHttpRequests(authorizeHttpRequests ->
+                        authorizeHttpRequests
+                                .requestMatchers(AntPathRequestMatcher.antMatcher("/**")).permitAll()
+                                .requestMatchers(AntPathRequestMatcher.antMatcher("/rest/domain")).permitAll()
+                                .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .headers(headersConfigurer -> headersConfigurer
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .sessionManagement(sessionConfigurer -> sessionConfigurer
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(tokenAuthenticationFilter, CsrfFilter.class)
+                .addFilterAfter(refreshTokenFilter, ExceptionTranslationFilter.class)
+                .addFilterAfter(jwtLogoutFilter, ExceptionTranslationFilter.class)
+                .addFilterAfter(requestLoggingFilter, ExceptionTranslationFilter.class)
+                .build();
+    }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public RequestLoggingFilter customLoggingFilter() {
+        RequestLoggingFilter requestLoggingFilter = new RequestLoggingFilter();
+        requestLoggingFilter.setIncludePayload(true);
+        return requestLoggingFilter;
+    }
+//
+//    @Bean
+//    public CommonsRequestLoggingFilter logFilter() {
+//        CommonsRequestLoggingFilter filter
+//                = new CommonsRequestLoggingFilter();
+//        filter.setIncludeQueryString(true);
+//        filter.setIncludePayload(true);
+//        filter.setMaxPayloadLength(10000);
+//        filter.setIncludeHeaders(true);
+//        filter.setAfterMessagePrefix("REQUEST DATA: ");
+//        return filter;
+//    }
+
+//     TODO: 10.12.2023 При развертывании сделай по-человечески !
+    @Bean
+    @Profile({"dev-react"})
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","chrome-extension://coohjcphdfgbiolnekdpbcijmhambjff"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

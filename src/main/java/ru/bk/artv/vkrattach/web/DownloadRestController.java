@@ -3,41 +3,68 @@ package ru.bk.artv.vkrattach.web;
 
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.bk.artv.vkrattach.domain.Order;
+import ru.bk.artv.vkrattach.config.security.TokenUser;
+import ru.bk.artv.vkrattach.services.TokenUserToDefaultUserConverter;
+import ru.bk.artv.vkrattach.services.model.Order;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 import ru.bk.artv.vkrattach.services.DownloadService;
+import ru.bk.artv.vkrattach.services.model.user.AdminUser;
+import ru.bk.artv.vkrattach.services.model.user.DefaultUser;
+import ru.bk.artv.vkrattach.services.model.user.ModeratorUser;
 import ru.bk.artv.vkrattach.services.utils.MapToStringUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+/**
+ * REST-сервис для загрузки генерируемых Docx файлов.
+ */
 @Slf4j
-@AllArgsConstructor
 @RestController
 @RequestMapping(path = "rest/data/download")
 public class DownloadRestController {
 
-    DownloadService DownloadService;
+    //сервис для загрузки docx файлов с данными
+    private final DownloadService downloadService;
+    private final TokenUserToDefaultUserConverter converter;
 
+    public DownloadRestController(ru.bk.artv.vkrattach.services.DownloadService downloadService, TokenUserToDefaultUserConverter converter) {
+        this.downloadService = downloadService;
+        this.converter = converter;
+    }
+
+    /**
+     * Получение docx списка зарегистрированных выпускных квалификационных работ в формате для вставки в приказ.
+     * Корректно выдается только при условии заполнения всех данных пользователей.
+     *
+     * @param spec спецификации, по которым сервис вставляет данные в список
+     * @param http request для логирования
+     * @return docx файл для загрузки
+     */
     @GetMapping(path = "/orders",
             produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-    public ResponseEntity<InputStreamResource> downloadAttachedOrdersDocx(@Filter Specification<Order> spec, HttpServletRequest http) {
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
+    public ResponseEntity<InputStreamResource> downloadAttachedOrdersDocx(@Filter Specification<Order> spec,
+                                                                          HttpServletRequest http) {
         log.info("Request params : {}", MapToStringUtil.mapAsString(http.getParameterMap()));
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition",
                 "inline; filename=orders.docx");
 
-        try (ByteArrayInputStream bis = DownloadService.downloadAttachedOrders(spec);) {
+        try (ByteArrayInputStream bis = downloadService.downloadAttachedOrders(spec);) {
 
             return ResponseEntity.ok()
                     .headers(headers)
@@ -45,6 +72,32 @@ public class DownloadRestController {
         } catch (IOException e) {
             e.printStackTrace();
             throw new ResourceNotFoundException("Таких заявок не обнаружено", e);
+        }
+    }
+
+    @GetMapping(path = "/docs",
+            produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<InputStreamResource> downloadAttachedDocuments(@RequestParam(value = "id", required = false) Long id,
+                                                                          @AuthenticationPrincipal TokenUser tokenUser) {
+        DefaultUser user = converter.convertToDefaultUser(tokenUser);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition",
+                "inline; filename=orders.docx");
+
+        id = switch (user.getRole()) {
+            case USER -> user.getId();
+            case ADMIN, MODERATOR -> id;
+        };
+
+        try (ByteArrayInputStream bis = downloadService.downloadReport(id);) {
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(new InputStreamResource(bis));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ResourceNotFoundException("Не удалось сгенерировать документ", e);
         }
     }
 }

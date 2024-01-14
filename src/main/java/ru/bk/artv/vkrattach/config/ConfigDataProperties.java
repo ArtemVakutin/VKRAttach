@@ -7,11 +7,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import ru.bk.artv.vkrattach.dao.repository.DomainDataRepository;
 import ru.bk.artv.vkrattach.services.ConfigDataService;
-import ru.bk.artv.vkrattach.domain.ConfigData;
+import ru.bk.artv.vkrattach.services.model.ConfigData;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Создает конфиг для отправки на клиент после старта основного приложения.
+ */
 @Slf4j
 @Component
 @AllArgsConstructor

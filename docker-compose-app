@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  vkrattach:
+    image: vkrattach:1.0
+    container_name: my-vkrattach-container
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-container:5432/vkrattach
+    ports:
+      - "80:8080"
+    restart: unless-stopped

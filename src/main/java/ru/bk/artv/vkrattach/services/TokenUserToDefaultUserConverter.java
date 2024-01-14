@@ -1,21 +1,15 @@
 package ru.bk.artv.vkrattach.services;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import ru.bk.artv.vkrattach.config.security.auth.TokenUser;
-import ru.bk.artv.vkrattach.dao.repository.DefaultUserRepository;
-import ru.bk.artv.vkrattach.domain.user.DefaultUser;
+import ru.bk.artv.vkrattach.config.security.TokenUser;
+import ru.bk.artv.vkrattach.services.model.user.DefaultUser;
 
-import java.util.function.Function;
 
-@AllArgsConstructor
-@Service
-public class TokenUserToDefaultUserConverter implements Function<TokenUser, DefaultUser> {
+/**
+ * Для перевода TokenUser (берется из JWT токена аутентификации) в DefaultUser
+ */
 
-    DefaultUserRepository defaultUserRepository;
+public interface TokenUserToDefaultUserConverter {
 
-    @Override
-    public DefaultUser apply(TokenUser tokenUser) {
-        return defaultUserRepository.findByLoginIgnoreCase(tokenUser.getUsername());
-    }
+    public DefaultUser convertToDefaultUser(TokenUser tokenUser);
+
 }

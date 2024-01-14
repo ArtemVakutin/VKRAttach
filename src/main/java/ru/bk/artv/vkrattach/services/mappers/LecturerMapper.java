@@ -2,14 +2,18 @@ package ru.bk.artv.vkrattach.services.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import ru.bk.artv.vkrattach.domain.Lecturer;
-import ru.bk.artv.vkrattach.dto.LecturerDto;
-import ru.bk.artv.vkrattach.dto.LecturerFullDto;
+import ru.bk.artv.vkrattach.services.model.Lecturer;
+import ru.bk.artv.vkrattach.web.dto.LecturerDto;
+import ru.bk.artv.vkrattach.web.dto.LecturerFullDto;
 
+
+/**
+ * Класс - мэппер для мэппинга Lecturer (руководитель ВКР) в/из Dto с помощью MapStruct.
+ */
 @Mapper(componentModel = "spring")
 public abstract class LecturerMapper {
 
-    public abstract Lecturer toLecturer(LecturerFullDto request, @MappingTarget Lecturer lecturer);
+    public abstract void toLecturer(LecturerFullDto request, @MappingTarget Lecturer lecturer);
 
     public abstract Lecturer toLecturer(LecturerFullDto request);
 

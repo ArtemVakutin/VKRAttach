@@ -3,12 +3,17 @@ package ru.bk.artv.vkrattach.dao;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.bk.artv.vkrattach.dao.repository.ThemeRepository;
-import ru.bk.artv.vkrattach.domain.Theme;
+import ru.bk.artv.vkrattach.services.model.Theme;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Класс создан как промежуточное между сервисами и репозиториями Spring JPA.
+ * В большинстве случаев просто перенаправляет в репозиторий.
+ * В ряде случаев при отсутствии в списках тем выбрасывает ResourceNotFountExceptions
+ */
 @Service
 public class ThemesDao {
 
@@ -28,8 +33,7 @@ public class ThemesDao {
                     "and Faculty : " + faculty + " and Year :" + year
                     + " are not found");
         } catch (IllegalArgumentException e) {
-            throw new ResourceNotFoundException("No enum constant : " +
-                    department + " : in ru.bk.artv.vkrattach.domain.Department");
+            throw new ResourceNotFoundException("No such departments in config constant : " + department);
         }
     }
 
@@ -51,6 +55,19 @@ public class ThemesDao {
 
     public void addTheme(Theme theme) {
         themeRepository.saveAndFlush(theme);
+    }
+
+
+    /**
+     * Проверяет, имеется ли сохраненная тема с такими данными (не по айдишнику)
+     *
+     * @param theme тема, которую пытаются сохранить/внести изменения
+     */
+    public boolean isThemeExist(Theme theme) {
+        return themeRepository.existsByThemeNameAndDepartmentAndFacultyAndYear(theme.getThemeName(),
+                theme.getDepartment(),
+                theme.getFaculty(),
+                theme.getYear());
     }
 
     public void deleteThemes(String department, String faculty, String year) {

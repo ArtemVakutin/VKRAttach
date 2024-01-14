@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.bk.artv.vkrattach.dao.LecturerDao;
 import ru.bk.artv.vkrattach.dao.ThemesDao;
-import ru.bk.artv.vkrattach.domain.Lecturer;
-import ru.bk.artv.vkrattach.domain.Order;
-import ru.bk.artv.vkrattach.domain.Theme;
-import ru.bk.artv.vkrattach.dto.OrderDTO;
+import ru.bk.artv.vkrattach.services.model.Lecturer;
+import ru.bk.artv.vkrattach.services.model.Order;
+import ru.bk.artv.vkrattach.services.model.Theme;
+import ru.bk.artv.vkrattach.web.dto.OrderDTO;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class OrderMapper {
             Theme theme = themesDao.getThemeById(orderDTO.getThemeId())
                     .orElseThrow(() -> new ResourceNotFoundException("Theme with id :" +
                             orderDTO.getThemeId() + " is not found"));
-            List<Order> orders = theme.getOrders().stream().filter((themeOrder -> themeOrder.getOrderStatus() != Order.OrderStatus.REFUSED)).collect(Collectors.toList());
+            List<Order> orders = theme.getOrders().stream().filter((themeOrder -> themeOrder.getRequestStatus() != Order.RequestStatus.REFUSED)).collect(Collectors.toList());
             if (orders.size() > 0 && (order.getTheme()==null || !order.getTheme().getThemeId().equals(orderDTO.getThemeId()))) {
                 throw new ResourceNotFoundException("theme with id: " + theme.getThemeId() + " is busy by : " + theme.getOrders().get(0).getUser().getId());
             } else {
@@ -47,7 +47,7 @@ public class OrderMapper {
         }
 
         if (orderDTO.getRequestStatus() != null) {
-            order.setOrderStatus(orderDTO.getRequestStatus());
+            order.setRequestStatus(orderDTO.getRequestStatus());
         }
 
         if (orderDTO.getComment() != null) {
@@ -90,7 +90,7 @@ public class OrderMapper {
             orderDTO.setComment(order.getComments());
         }
 
-        orderDTO.setRequestStatus(order.getOrderStatus());
+        orderDTO.setRequestStatus(order.getRequestStatus());
     }
 
 }

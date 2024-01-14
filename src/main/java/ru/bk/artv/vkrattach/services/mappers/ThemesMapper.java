@@ -1,36 +1,34 @@
 package ru.bk.artv.vkrattach.services.mappers;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.springframework.stereotype.Service;
-import ru.bk.artv.vkrattach.domain.Order;
-import ru.bk.artv.vkrattach.domain.Theme;
-import ru.bk.artv.vkrattach.dto.ThemeDTO;
+import ru.bk.artv.vkrattach.services.model.Order;
+import ru.bk.artv.vkrattach.services.model.Theme;
+import ru.bk.artv.vkrattach.web.dto.ThemeDto;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ *
+ */
 @Slf4j
-@Service
-@AllArgsConstructor
-public class ThemesMapper {
-
-    OrderMapper orderMapper;
-    ThemesMapperAbstract themesMapper;
+//@AllArgsConstructor
+@Mapper(componentModel = "spring")
+public abstract class ThemesMapper {
 
     //Метод проверяет, чтобы количество неотклоненных заявок было не больше 1.
-    public ThemeDTO themeToThemeDTO(Theme theme) {
+    public ThemeDto themeToThemeDTO(Theme theme) {
         log.info(theme.toString());
-        ThemeDTO themeDTO = new ThemeDTO();
+        ThemeDto themeDTO = new ThemeDto();
         themeDTO.setId(theme.getThemeId());
         themeDTO.setThemeName(theme.getThemeName());
         themeDTO.setDepartment(theme.getDepartment());
         themeDTO.setFaculty(theme.getFaculty());
         themeDTO.setYear(theme.getYear());
         if (theme.getOrders() != null && !theme.getOrders().isEmpty()) {
-            List<Order> orders = theme.getOrders().stream().filter((order -> order.getOrderStatus() != Order.OrderStatus.REFUSED)).collect(Collectors.toList());
+            List<Order> orders = theme.getOrders().stream().filter((order -> order.getRequestStatus() != Order.RequestStatus.REFUSED)).toList();
             if (orders.size() > 1) {
                 throw new ResourceNotFoundException("in theme : " + theme.getThemeId() + " non refused orders > 1");
             } else if(!orders.isEmpty()){
@@ -42,11 +40,7 @@ public class ThemesMapper {
         return themeDTO;
     }
 
-    public Theme toTheme(Theme theme, ThemeDTO themeDTO) {
-        return themesMapper.toTheme(theme, themeDTO);
-    }
+    abstract public Theme toTheme(@MappingTarget Theme theme, ThemeDto themeDTO);
 
-    public Theme toTheme(ThemeDTO themeDTO) {
-        return themesMapper.toTheme(themeDTO);
-    }
+    abstract public Theme toTheme(ThemeDto themeDTO);
 }

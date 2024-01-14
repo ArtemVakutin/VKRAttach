@@ -1,17 +1,10 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/vkrattach
-    username: postgres
-    password: 11111
-    driver-class-name: org.postgresql.Driver
   jpa:
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: false
     properties:
       hibernate.ejb.interceptor: ru.bk.artv.vkrattach.config.EmptyStringInterceptor
   profiles:
-    include: user
+    include: profiles
+    active: test-h2
   servlet:
     multipart:
       enabled: true
@@ -19,28 +12,28 @@ spring:
       max-request-size: 10MB
   web:
     resources:
-      static-locations: classpath:/resources/templates/
+      static-locations: classpath:/templates/static
+  sql:
+    init:
+      encoding: utf-8
 jwt:
-  cookie-token-key: '{"kty":"oct","k":"956PBFst1FguLr5irJD-aQ"}'
-
+  access-token-key: '{"kty":"oct","k":"hi7S5RX5ZRZooHA0RKGctZ-KtR9FoESgCnH-3BNg5XI"}'
+  refresh-token-key: '{"kty":"oct","k":"956PBFst1FguLr5irJD-aQ"}'
 logging:
   file:
     name: mylog.log
   level:
-    ru.artv.bk.vkrattach: INFO
+    ru.bk.artv.vkrattach: INFO
     org:
       springframework:
-#        security: trace
+        security: INFO
       hibernate:
-        SQL: debug
+        SQL: INFO
         type:
           descriptor:
             sql:
-              BasicBinder: trace
+              BasicBinder: INFO
 
 server:
   port: 8080
-  servlet:
-    session:
-      timeout: 24h
 

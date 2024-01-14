@@ -6,11 +6,11 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.springframework.stereotype.Service;
-import ru.bk.artv.vkrattach.domain.ConfigData;
-import ru.bk.artv.vkrattach.domain.Lecturer;
-import ru.bk.artv.vkrattach.domain.Order;
-import ru.bk.artv.vkrattach.domain.Theme;
-import ru.bk.artv.vkrattach.domain.user.SimpleUser;
+import ru.bk.artv.vkrattach.services.model.ConfigData;
+import ru.bk.artv.vkrattach.services.model.Lecturer;
+import ru.bk.artv.vkrattach.services.model.Order;
+import ru.bk.artv.vkrattach.services.model.Theme;
+import ru.bk.artv.vkrattach.services.model.user.SimpleUser;
 import ru.bk.artv.vkrattach.services.ConfigDataService;
 import ru.bk.artv.vkrattach.services.comparators.OrdersComparatorByDepartmentLecturerTheme;
 
@@ -20,12 +20,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Генерирует длинный список всех заявок (заявка - пользователь - руководитель ВКР) в DOCx формате в соответствии
+ * со списом заявок
+ */
 @Service
 @AllArgsConstructor
-public class ThemeAttachDocxGenerator {
+public class ThemeAttachDocxGenerator implements DocxGenerator<List<Order>> {
 
     ConfigDataService dataService;
 
+    @Override
     public ByteArrayOutputStream generateDocx(List<Order> orders) throws IOException {
         List<Order> noLecturers;
         List<Order> sortedOrders;
@@ -55,6 +60,7 @@ public class ThemeAttachDocxGenerator {
 
         ByteArrayOutputStream bs = new ByteArrayOutputStream();
         document.write(bs);
+        document.close();
         return bs;
     }
 

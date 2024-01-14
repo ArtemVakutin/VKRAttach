@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.2.1</version>
         <relativePath/>
     </parent>
 
@@ -18,12 +18,16 @@
 
     <properties>
         <java.version>17</java.version>
-        <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <lombok.version>1.18.24</lombok.version>
-        <nimbus-jose-jwt.version>9.35</nimbus-jose-jwt.version>
+        <lombok.version>1.18.30</lombok.version>
+        <nimbus-jose-jwt.version>9.37.3</nimbus-jose-jwt.version>
+        <com.turkraft.springfilter.version>3.1.6</com.turkraft.springfilter.version>
+        <org.apache.poi.version>5.2.5</org.apache.poi.version>
 
-        <logback.version>1.4.9</logback.version>
+
+        <!--        <logback.version>1.4.9</logback.version>-->
     </properties>
 
     <dependencies>
@@ -53,19 +57,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>nimbus-jose-jwt</artifactId>
-            <version>${nimbus-jose-jwt.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
@@ -77,6 +68,27 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${nimbus-jose-jwt.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -93,13 +105,13 @@
         <dependency>
             <groupId>com.turkraft.springfilter</groupId>
             <artifactId>core</artifactId>
-            <version>3.1.5</version>
+            <version>${com.turkraft.springfilter.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.turkraft.springfilter</groupId>
             <artifactId>jpa</artifactId>
-            <version>3.1.5</version>
+            <version>${com.turkraft.springfilter.version}</version>
         </dependency>
 
         <dependency>
@@ -111,58 +123,40 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.2.3</version>
+            <version>${org.apache.poi.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.2.3</version>
+            <version>${org.apache.poi.version}</version>
         </dependency>
 
         <!--        <dependency>-->
-        <!--            <groupId>org.docx4j</groupId>-->
-        <!--            <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>-->
-        <!--            <version>11.4.9</version>-->
+        <!--            <groupId>com.h2database</groupId>-->
+        <!--            <artifactId>h2</artifactId>-->
+        <!--            <version>2.2.224</version>-->
+        <!--            <scope>test</scope>-->
         <!--        </dependency>-->
 
         <!--        <dependency>-->
-        <!--            <groupId>org.docx4j</groupId>-->
-        <!--            <artifactId>docx4j-core</artifactId>-->
-        <!--            <version>11.4.9</version>-->
+        <!--            <groupId>ch.qos.logback</groupId>-->
+        <!--            <artifactId>logback-core</artifactId>-->
+        <!--            <version>${logback.version}</version>-->
         <!--        </dependency>-->
-
         <!--        <dependency>-->
-        <!--            <groupId>jakarta.xml.bind</groupId>-->
-        <!--            <artifactId>jakarta.xml.bind-api</artifactId>-->
-        <!--            <version>4.0.0</version>-->
+        <!--            <groupId>ch.qos.logback</groupId>-->
+        <!--            <artifactId>logback-classic</artifactId>-->
+        <!--            <version>${logback.version}</version>-->
         <!--        </dependency>-->
-
         <!--        <dependency>-->
-        <!--            <groupId>com.sun.xml.bind</groupId>-->
-        <!--            <artifactId>jaxb-impl</artifactId>-->
-        <!--            <version>4.0.3</version>-->
-        <!--        </dependency>-->
-
-        <!--        <dependency>-->
-        <!--            <groupId>jakarta.activation</groupId>-->
-        <!--            <artifactId>jakarta.activation-api</artifactId>-->
-        <!--            <version>2.1.2</version>-->
+        <!--            <groupId>ch.qos.logback</groupId>-->
+        <!--            <artifactId>logback-access</artifactId>-->
+        <!--            <version>${logback.version}</version>-->
         <!--        </dependency>-->
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-access</artifactId>
-            <version>${logback.version}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
         </dependency>
 
     </dependencies>
@@ -179,15 +173,30 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <image>
+                        <!-- Имя образа -->
+                        <name>vkrattach</name>
+                        <env>
+                            <JAVA_TOOL_OPTIONS>-Dfile.encoding=UTF-8</JAVA_TOOL_OPTIONS>
+                        </env>
+                        <!-- Список используемых Buildpacks -->
+                    </image>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.12.1</version>
                 <configuration>
-                    <source>11</source> <!-- depending on your project -->
-                    <target>11</target> <!-- depending on your project -->
+                    <source>17</source> <!-- depending on your project -->
+                    <target>17</target> <!-- depending on your project -->
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -209,28 +218,28 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>Copy my react app into my Spring Boot target static folder</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/classes/static</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/react/build</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-resources-plugin</artifactId>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>Copy my react app into my Spring Boot target static folder</id>-->
+            <!--                        <phase>process-resources</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>copy-resources</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <outputDirectory>target/classes/static</outputDirectory>-->
+            <!--                            <resources>-->
+            <!--                                <resource>-->
+            <!--                                    <directory>src/react/build</directory>-->
+            <!--                                    <filtering>true</filtering>-->
+            <!--                                </resource>-->
+            <!--                            </resources>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
     <repositories>
@@ -253,20 +262,12 @@
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <id>spring-snapshots</id>
+            <url>https://repo.spring.io/snapshot</url>
         </pluginRepository>
         <pluginRepository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
         </pluginRepository>
     </pluginRepositories>
 

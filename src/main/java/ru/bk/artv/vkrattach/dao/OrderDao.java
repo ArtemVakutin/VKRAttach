@@ -4,15 +4,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.bk.artv.vkrattach.dao.repository.OrderRepository;
-import ru.bk.artv.vkrattach.domain.Lecturer;
-import ru.bk.artv.vkrattach.domain.Order;
-import ru.bk.artv.vkrattach.domain.Theme;
-import ru.bk.artv.vkrattach.domain.user.SimpleUser;
+import ru.bk.artv.vkrattach.services.model.Lecturer;
+import ru.bk.artv.vkrattach.services.model.Order;
+import ru.bk.artv.vkrattach.services.model.Theme;
+import ru.bk.artv.vkrattach.services.model.user.SimpleUser;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Класс создан как промежуточное между сервисами и репозиториями Spring JPA.
+ * В большинстве случаев просто перенаправляет в репозиторий.
+ * В ряде случаев при отсутствии в списках заявок выбрасывает ResourceNotFountExceptions
+ */
 @Slf4j
 @Service
 public class OrderDao {
@@ -35,6 +40,10 @@ public class OrderDao {
         return orderRepository.findById(id);
     }
 
+    public Optional<Order> getOrder(Long id, SimpleUser user) {
+        return orderRepository.findByIdAndUser(id, user);
+    }
+
     public void addOrder(Order order) {
         orderRepository.saveAndFlush(order);
      }
@@ -48,9 +57,7 @@ public class OrderDao {
         return orderRepository.existsByTheme(theme);
     }
 
-    public boolean isOrderExists(Long id, SimpleUser user) {
-        return orderRepository.existsByIdAndUser(id, user);
-    }
+
 
     public List<Order> getOrders(Lecturer lecturer) {
         return orderRepository.findByLecturer(lecturer);
@@ -60,7 +67,7 @@ public class OrderDao {
     public List<Order> getOrders(Specification<Order> spec) {
         List<Order> orders = orderRepository.findAll(spec);
         if (orders.isEmpty()){
-            throw new ResourceNotFoundException(" заявок с такими данными не найдено");
+            throw new ResourceNotFoundException("Заявок с такими данными не найдено");
         }
         return orders;
     }

@@ -6,13 +6,18 @@ import org.springframework.stereotype.Service;
 import ru.bk.artv.vkrattach.dao.repository.DefaultUserRepository;
 import ru.bk.artv.vkrattach.dao.repository.OrderRepository;
 import ru.bk.artv.vkrattach.dao.repository.SimpleUserRepository;
-import ru.bk.artv.vkrattach.domain.user.Role;
-import ru.bk.artv.vkrattach.domain.user.DefaultUser;
-import ru.bk.artv.vkrattach.domain.user.SimpleUser;
+import ru.bk.artv.vkrattach.services.model.user.Role;
+import ru.bk.artv.vkrattach.services.model.user.DefaultUser;
+import ru.bk.artv.vkrattach.services.model.user.SimpleUser;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 
 import java.util.List;
 
+/**
+ * Класс создан как промежуточное между сервисами и репозиториями Spring JPA.
+ * В большинстве случаев просто перенаправляет в репозиторий.
+ * В ряде случаев при отсутствии в списках пользователей выбрасывает ResourceNotFountExceptions
+ */
 @Service
 @AllArgsConstructor
 public class UserDao {

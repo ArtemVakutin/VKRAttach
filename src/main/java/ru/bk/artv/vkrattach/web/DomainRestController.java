@@ -1,24 +1,25 @@
 package ru.bk.artv.vkrattach.web;
 
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.bk.artv.vkrattach.domain.ConfigData;
+import ru.bk.artv.vkrattach.services.model.ConfigData;
 import ru.bk.artv.vkrattach.services.ConfigDataService;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST-контроллир для получения основных конфигурационных данных при старте клиентского приложения
+ */
+@Slf4j
 @RestController
 @RequestMapping(path = "rest/domain")
 public class DomainRestController {
 
-ConfigDataService configDataService;
+    //сервис, предоставляющий domain-data
+    private final ConfigDataService configDataService;
 
     public DomainRestController(ConfigDataService allDomainData) {
         this.configDataService = allDomainData;
@@ -29,8 +30,13 @@ ConfigDataService configDataService;
 //        return allConfigData;
 //    }
 
+    /**
+     * Получение config-data
+     *
+     * @return Map типа "вид данных" - "список возможных данных"
+     */
     @GetMapping
-    public Map<ConfigData.ConfigType, List<ConfigData>> getDomainData(HttpServletResponse response) {
+    public Map<ConfigData.ConfigType, List<ConfigData>> getDomainData() {
         return configDataService.getDomainData();
     }
 }

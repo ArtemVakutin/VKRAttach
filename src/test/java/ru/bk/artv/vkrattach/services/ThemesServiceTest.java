@@ -1,74 +1,208 @@
 package ru.bk.artv.vkrattach.services;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
-import ru.bk.artv.vkrattach.services.mappers.ThemesMapper;
+import org.springframework.data.jpa.domain.Specification;
+import ru.bk.artv.vkrattach.dao.OrderDao;
 import ru.bk.artv.vkrattach.dao.ThemesDao;
-import ru.bk.artv.vkrattach.domain.Theme;
-import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
+import ru.bk.artv.vkrattach.exceptions.ResourceNotSavedException;
+import ru.bk.artv.vkrattach.services.mappers.ThemesMapper;
+import ru.bk.artv.vkrattach.services.model.Theme;
+import ru.bk.artv.vkrattach.testutils.OrderBuilder;
+import ru.bk.artv.vkrattach.testutils.ThemeBuilder;
+import ru.bk.artv.vkrattach.testutils.ThemeDtoBuilder;
+import ru.bk.artv.vkrattach.web.dto.ThemeDto;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ThemesServiceTest {
 
-
-    @Mock(name = "themesDao")
+    @Mock
     ThemesDao themesDao;
 
-    @Mock(name = "themesMapper")
+    @Mock
     ThemesMapper themesMapper;
 
+    @Mock
+    OrderDao orderDao;
+
     @InjectMocks
-    private ThemesService themesService;
+    ThemesService themesService;
 
-    @BeforeEach
-    void setUp(){
-        initThemesService();
-        //Можно ручками мокать
-//        ThemesMapper ts = Mockito.mock(ThemesMapper.class);
-        //Потом напрямую вставить рефлекшном
-        //ReflectionTestUtils.setField(themesService, "themesMapper", themesMapper);
-        //Можно использовать fake-объекты
+    @Test
+    void getThemes_GivenThreeArgs_ReturnsThemes() {
+        // given
+        String department = "УПв";
+        String faculty = "НБФЗОП";
+        String year = "2019";
 
+        Theme theme1 = ThemeBuilder.create().withThemeId(1L).build();
+        Theme theme2 = ThemeBuilder.create().withThemeId(2L).build();
+        List<Theme> themes = Arrays.asList(theme1, theme2);
+
+        ThemeDto themeDto1 = ThemeDtoBuilder.create().build();
+        ThemeDto themeDto2 = ThemeDtoBuilder.create().build();
+
+
+        when(themesDao.getThemesByDepartmentFacultyYear(department, faculty, year)).thenReturn(themes);
+        when(themesMapper.themeToThemeDTO(eq(theme1))).thenReturn(themeDto1);
+        when(themesMapper.themeToThemeDTO(eq(theme2))).thenReturn(themeDto2);
+
+        // when
+        List<ThemeDto> result = themesService.getThemes(department, faculty, year);
+
+        // then
+        assertEquals(2, result.size());
     }
 
     @Test
-    void getThemes() {
-        themesService.getThemes("UPV", "NBFZOP", "2020");
+    void getAllThemes_GivenSpecification_ReturnsAllThemes() {
+        // given
 
-        Assertions.assertThrows(RuntimeException.class,
-                ()->themesService.getThemes("UPC", "NBFZOP", "2020"));
+        Specification<Theme> spec = (root, query, criteriaBuilder) -> null;
 
+        Theme theme1 = ThemeBuilder.create().withThemeId(1L).build();
+        Theme theme2 = ThemeBuilder.create().withThemeId(2L).build();
+        List<Theme> themes = Arrays.asList(theme1, theme2);
+
+        ThemeDto themeDto1 = ThemeDtoBuilder.create().build();
+        ThemeDto themeDto2 = ThemeDtoBuilder.create().withIsBusy(true).build();
+
+        when(themesDao.getAllThemes(spec)).thenReturn(themes);
+        when(themesMapper.themeToThemeDTO(eq(theme1))).thenReturn(themeDto1);
+        when(themesMapper.themeToThemeDTO(eq(theme2))).thenReturn(themeDto2);
+
+        // when
+        List<ThemeDto> result = themesService.getAllThemes(spec);
+
+        // then
+        assertEquals(2, result.size());
     }
 
-    private void initThemesService() {
-        when(themesDao.getThemesByDepartmentFacultyYear(any(), any(), any())).thenReturn(new ArrayList<Theme>(List.of(new Theme(), new Theme())));
-        when(themesDao.getThemesByDepartmentFacultyYear(Mockito.isA(String.class), Mockito.eq("NBFZOP"), any())).thenAnswer(new Answer<List<Theme>>() {            @Override
-            public List<Theme> answer(InvocationOnMock invocationOnMock) throws Throwable {
-                Theme theme = new Theme();
-                theme.setDepartment(invocationOnMock.getArgument(0, String.class));
-                theme.setFaculty(invocationOnMock.getArgument(1, String.class));
-                theme.setYear(invocationOnMock.getArgument(2, String.class));
-                theme.setThemeName("Прыжки в воду без парашюта");
-                return new ArrayList<Theme>(List.of(theme));
-            }
-        });
-        when(themesDao.getThemesByDepartmentFacultyYear(Mockito.eq("UPC"), any(), any()))
-                .thenThrow(new ResourceNotFoundException("EXC"));
+    @Test
+    void deleteTheme_GivenThemeId_SuccessfulDeletion() {
+        // given
+        Long themeId = 1L;
+        Optional<Theme> build = Optional.ofNullable(ThemeBuilder.create().build());
+
+
+        when(themesDao.getThemeById(any())).thenReturn(build);
+        when(orderDao.isOrderExists(any())).thenReturn(false);
+
+        // when
+        themesService.deleteTheme(themeId);
+
+        // then
+        verify(themesDao, times(1)).getThemeById(any());
+        verify(themesDao, times(1)).deleteTheme(themeId);
+        verify(orderDao, times(1)).isOrderExists(any());
+    }
+
+    @Test
+    void deleteTheme_GivenAttachedThemeId_ThrowsException() {
+        // given
+        Long themeId = 1L;
+        Optional<Theme> build = Optional.ofNullable(ThemeBuilder.create().build());
+
+
+        when(themesDao.getThemeById(any())).thenReturn(build);
+        when(orderDao.isOrderExists(any())).thenReturn(true);
+
+        // then
+        assertThrows(ResourceNotSavedException.class, ()->themesService.deleteTheme(themeId));
+        verify(themesDao, times(0)).deleteTheme(themeId);
     }
 
 
+    @Test
+    void addTheme_ReturnsAddedTheme() {
+        // given
+        ThemeDto themeDto = ThemeDtoBuilder.create().build();
+        Theme theme = ThemeBuilder.create().build();
+        when(themesMapper.toTheme(any())).thenReturn(theme);
+        when(themesMapper.themeToThemeDTO(any())).thenReturn(themeDto);
+
+        // when
+        ThemeDto result = themesService.addTheme(themeDto);
+
+        // then
+        assertNotNull(result);
+        verify(themesMapper, times(1)).toTheme(any());
+        verify(themesDao, times(1)).addTheme(any());
+        verify(themesDao, times(1)).isThemeExist(any());
+    }
+
+    @Test
+    void addExistedTheme_ThrowsException() {
+        // given
+        ThemeDto themeDto = ThemeDtoBuilder.create().build();
+        Theme theme = ThemeBuilder.create().build();
+        when(themesMapper.toTheme(any())).thenReturn(theme);
+        when(themesDao.isThemeExist(any())).thenReturn(true);
+
+        // then
+        assertThrows(ResourceNotSavedException.class, ()->themesService.addTheme(themeDto));
+        verify(themesMapper, times(1)).toTheme(any());
+        verify(themesDao, times(0)).addTheme(any());
+        verify(themesDao, times(1)).isThemeExist(any());
+    }
+
+    @Test
+    void patchTheme_ReturnsPatchedTheme() {
+        // given
+        ThemeDto themeDto = ThemeDtoBuilder.create().withId(1L).build();
+        Theme theme = ThemeBuilder.create().withThemeId(1L).build();
+
+        when(themesDao.getThemeById(eq(1L))).thenReturn(Optional.of(theme));
+        when(themesMapper.toTheme(any(), any())).thenReturn(theme);
+        when(themesMapper.themeToThemeDTO(any())).thenReturn(themeDto);
+
+        // when
+        ThemeDto result = themesService.patchTheme(themeDto);
+
+        // then
+        assertNotNull(result);
+        verify(themesDao, times(1)).getThemeById(eq(1L));
+        verify(themesMapper, times(1)).toTheme(any(), any());
+        verify(themesDao, times(1)).addTheme(any());
+        verify(themesDao, times(1)).isThemeExist(any());
+    }
+
+    @Test
+    void deleteThemes_ReturnsThemesToDelete() {
+        // given
+        String department = "НБФЗОП";
+        String faculty = "УПв";
+        String year = "2019";
+
+        Theme theme1 = ThemeBuilder.create().withThemeId(1L).build();
+        Theme theme2 = ThemeBuilder.create()
+                .withThemeId(1L)
+                .withOrders(Collections.singletonList(OrderBuilder.create().build()))
+                .build();
+        ThemeDto themeDto = ThemeDtoBuilder.create().build();
+
+        List<Theme> themes = Arrays.asList(theme1, theme2);
+        when(themesDao.getThemesByDepartmentFacultyYear(anyString(), anyString(), anyString())).thenReturn(themes);
+        when(orderDao.isOrderExists(eq(theme1))).thenReturn(false);
+        when(orderDao.isOrderExists(eq(theme2))).thenReturn(true);
+        when(themesMapper.themeToThemeDTO(any())).thenReturn(themeDto);
+
+        // when
+        List<ThemeDto> result = themesService.deleteThemes(department, faculty, year);
+
+        // then
+        assertEquals(1, result.size());
+    }
 }
