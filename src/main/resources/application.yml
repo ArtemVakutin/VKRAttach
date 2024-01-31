@@ -3,8 +3,8 @@ spring:
     properties:
       hibernate.ejb.interceptor: ru.bk.artv.vkrattach.config.EmptyStringInterceptor
   profiles:
-    include: profiles
-    active: test-h2
+    include: profiles, keys
+    active: dev-h2
   servlet:
     multipart:
       enabled: true
@@ -16,12 +16,10 @@ spring:
   sql:
     init:
       encoding: utf-8
-jwt:
-  access-token-key: '{"kty":"oct","k":"hi7S5RX5ZRZooHA0RKGctZ-KtR9FoESgCnH-3BNg5XI"}'
-  refresh-token-key: '{"kty":"oct","k":"956PBFst1FguLr5irJD-aQ"}'
 logging:
   file:
-    name: mylog.log
+    path: c:/temp/logs
+    name: logs
   level:
     ru.bk.artv.vkrattach: INFO
     org:
@@ -36,4 +34,3 @@ logging:
 
 server:
   port: 8080
-

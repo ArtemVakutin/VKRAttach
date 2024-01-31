@@ -3,15 +3,15 @@ package ru.bk.artv.vkrattach.config.security.serializers;
 import com.nimbusds.jose.*;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bk.artv.vkrattach.config.security.Token;
 
 import java.util.Date;
 
+@Slf4j
 public class RefreshTokenJweStringSerializerImpl implements RefreshTokenJweStringSerializer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RefreshTokenJweStringSerializerImpl.class);
 
     private final JWEEncrypter jweEncrypter;
 
@@ -47,14 +47,10 @@ public class RefreshTokenJweStringSerializerImpl implements RefreshTokenJweStrin
 
             return encryptedJWT.serialize();
         } catch (JOSEException exception) {
-            LOGGER.error(exception.getMessage(), exception);
+            log.error(exception.getMessage(), exception);
         }
 
         return null;
-    }
-
-    public void setJweAlgorithm(JWEAlgorithm jweAlgorithm) {
-        this.jweAlgorithm = jweAlgorithm;
     }
 
     public void setEncryptionMethod(EncryptionMethod encryptionMethod) {

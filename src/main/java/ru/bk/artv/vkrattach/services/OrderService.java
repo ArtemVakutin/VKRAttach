@@ -90,9 +90,9 @@ public class OrderService {
         try {
             orderDao.getOrdersByUser(user).forEach(order -> {
                 if (order.getRequestStatus() == Order.RequestStatus.ACCEPTED) {
-                    throw new OrderAcceptedException("User with id : " + user.getId() + " already has accepted order");
+                    throw new OrderAcceptedException("Пользователь уже имеет одобренную заявку");
                 } else if (order.getRequestStatus() == Order.RequestStatus.UNDER_CONSIDERATION) {
-                    throw new OrderAcceptedException("User with id : " + user.getId() + " already has non refused order");
+                    throw new OrderAcceptedException("Пользователь уже имеет нерассмотренную заявку, вы можете ее удалить при необходимости");
                 }
             });
         } catch (
@@ -175,6 +175,7 @@ public class OrderService {
      * @param spec спецификации (год набора, кафедра и т.д.)
      * @return список заявок в Dto
      */
+    @Transactional
     public List<OrderDTO> getOrders(Specification<Order> spec) {
         return orderDao.getOrders(spec)
                 .stream()
@@ -184,6 +185,5 @@ public class OrderService {
                     return orderDTO;
                 })
                 .collect(Collectors.toList());
-
     }
 }

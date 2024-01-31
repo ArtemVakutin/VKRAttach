@@ -41,7 +41,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotSavedException.class)
     public ResponseEntity<AppError> catchResourceNotSavedException(ResourceNotSavedException e) {
-        log.error(e.getMessage(), e);
+        log.debug(e.getMessage(), e);
+        log.warn(e.getMessage());
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
@@ -54,7 +55,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<AppError> catchConstraintViolationException(ConstraintViolationException e) {
         log.debug(e.getMessage(), e);
-        log.error(e.getMessage());
+        log.warn(e.getMessage());
         Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
         String collect = constraintViolations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(",\n"));
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), collect), HttpStatus.BAD_REQUEST);
@@ -68,6 +69,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UploadResourceException.class)
     public ResponseEntity<AppError> catchUploadResourceException(UploadResourceException e) {
+        log.warn(e.getMessage(), e);
+        return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<AppError> catchRuntimeException(RuntimeException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }

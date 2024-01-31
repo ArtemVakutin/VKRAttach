@@ -3,6 +3,7 @@ package ru.bk.artv.vkrattach.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -155,5 +156,18 @@ public class UserService {
      */
     public void deleteUser(Long userId) {
         userDao.deleteUser(userId);
+    }
+
+    /** Изменение пароля пользователя.
+     * @param user Пользователь из базы данных
+     * @param userDto данные нового и старого пароля, пришедшие от клиента. Остальные поля null. Новый пароль валидируется
+     *                на web уровне.
+     */
+    public void changeUserPassword(UserDto userDto, DefaultUser user) {
+        if (!passwordEncoder.matches(userDto.getOldPassword(), user.getPassword())) {
+            throw new ResourceNotSavedException("Старый пароль не совпадает с паролем аккаунта");
+        }
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userDao.saveUser(user);
     }
 }

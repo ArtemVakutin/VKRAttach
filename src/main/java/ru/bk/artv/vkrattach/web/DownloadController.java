@@ -20,27 +20,25 @@ import ru.bk.artv.vkrattach.services.TokenUserToDefaultUserConverter;
 import ru.bk.artv.vkrattach.services.model.Order;
 import ru.bk.artv.vkrattach.exceptions.ResourceNotFoundException;
 import ru.bk.artv.vkrattach.services.DownloadService;
-import ru.bk.artv.vkrattach.services.model.user.AdminUser;
 import ru.bk.artv.vkrattach.services.model.user.DefaultUser;
-import ru.bk.artv.vkrattach.services.model.user.ModeratorUser;
 import ru.bk.artv.vkrattach.services.utils.MapToStringUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 /**
- * REST-сервис для загрузки генерируемых Docx файлов.
+ * REST-сервис для загрузки генерируемых Docx файлов, а также образцов документов
  */
 @Slf4j
 @RestController
 @RequestMapping(path = "rest/data/download")
-public class DownloadRestController {
+public class DownloadController {
 
     //сервис для загрузки docx файлов с данными
     private final DownloadService downloadService;
     private final TokenUserToDefaultUserConverter converter;
 
-    public DownloadRestController(ru.bk.artv.vkrattach.services.DownloadService downloadService, TokenUserToDefaultUserConverter converter) {
+    public DownloadController(ru.bk.artv.vkrattach.services.DownloadService downloadService, TokenUserToDefaultUserConverter converter) {
         this.downloadService = downloadService;
         this.converter = converter;
     }
@@ -75,10 +73,17 @@ public class DownloadRestController {
         }
     }
 
+    /**
+     * Сервис загрузки сгенерированного рапорта на заявку на закрепление ВКР
+     *
+     * @param id айди пользователя, рапорт которого надо загружать. Для модератора и админа.
+     * @param tokenUser аутентифицированный пользователь
+     * @return поток с рапортом
+     */
     @GetMapping(path = "/docs",
             produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<InputStreamResource> downloadAttachedDocuments(@RequestParam(value = "id", required = false) Long id,
+    public ResponseEntity<InputStreamResource> downloadReport(@RequestParam(value = "id", required = false) Long id,
                                                                           @AuthenticationPrincipal TokenUser tokenUser) {
         DefaultUser user = converter.convertToDefaultUser(tokenUser);
         HttpHeaders headers = new HttpHeaders();
@@ -98,6 +103,30 @@ public class DownloadRestController {
         } catch (IOException e) {
             e.printStackTrace();
             throw new ResourceNotFoundException("Не удалось сгенерировать документ", e);
+        }
+    }
+
+    /**
+     * Сервис загрузки образцов загружаемых документов. Позже при желании можно переделать в сервис загрузки любых образцов
+     *
+     * @param fileName название файла, должно соответствовать загружаемому файлу из папки files
+     * @return поток с файлом
+     */
+    @GetMapping(path = "/example",
+            produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
+    public ResponseEntity<InputStreamResource> downloadExample(@RequestParam String fileName) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition",
+                "inline; filename=" + fileName);
+
+        try (ByteArrayInputStream bis = downloadService.downloadExample(fileName);) {
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(new InputStreamResource(bis));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ResourceNotFoundException("Не удалось выгрузить документ", e);
         }
     }
 }

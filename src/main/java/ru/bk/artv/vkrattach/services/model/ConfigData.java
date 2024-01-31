@@ -21,7 +21,7 @@ public class ConfigData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "config_id")
-    @JsonIgnore
+//    @JsonIgnore
     private Long id;
 
     /**

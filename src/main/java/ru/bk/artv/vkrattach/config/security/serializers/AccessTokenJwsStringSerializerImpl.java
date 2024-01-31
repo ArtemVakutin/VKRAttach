@@ -6,15 +6,15 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bk.artv.vkrattach.config.security.Token;
 
 import java.util.Date;
 
+@Slf4j
 public class AccessTokenJwsStringSerializerImpl implements AccessTokenJwsStringSerializer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenJwsStringSerializerImpl.class);
 
     private final JWSSigner jwsSigner;
 
@@ -47,7 +47,7 @@ public class AccessTokenJwsStringSerializerImpl implements AccessTokenJwsStringS
 
             return signedJWT.serialize();
         } catch (JOSEException exception) {
-            LOGGER.error(exception.getMessage(), exception);
+            log.error(exception.getMessage(), exception);
         }
 
         return null;
@@ -56,4 +56,5 @@ public class AccessTokenJwsStringSerializerImpl implements AccessTokenJwsStringS
     public void setJwsAlgorithm(JWSAlgorithm jwsAlgorithm) {
         this.jwsAlgorithm = jwsAlgorithm;
     }
+
 }

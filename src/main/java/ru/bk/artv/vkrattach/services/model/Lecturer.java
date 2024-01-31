@@ -60,6 +60,12 @@ public class Lecturer {
     private String rank;
 
     /**
+     * вид звания
+     */
+    @Column(name = "lecturer_rank_type")
+    private String rankType;
+
+    /**
      * должность
      */
     @Column(name = "lecturer_position")

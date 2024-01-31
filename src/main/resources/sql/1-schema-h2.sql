@@ -1,3 +1,10 @@
+drop table if exists vkr_order;
+drop table if exists vkr_lecturer;
+drop table if exists vkr_theme;
+drop table if exists vkr_user;
+drop table if exists vkr_config_data;
+drop table if exists vkr_deactivated_token;
+
 CREATE TABLE IF NOT EXISTS vkr_deactivated_token
 (
     token_id         UUID PRIMARY KEY,

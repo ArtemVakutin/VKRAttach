@@ -17,6 +17,8 @@ public class LecturerFullDto extends LecturerDto {
 
     private String rank;
 
+    private String rankType;
+
     private String exception;
 
     private String position;

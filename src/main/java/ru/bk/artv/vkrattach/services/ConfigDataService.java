@@ -3,6 +3,8 @@ package ru.bk.artv.vkrattach.services;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.bk.artv.vkrattach.dao.repository.DomainDataRepository;
 import ru.bk.artv.vkrattach.services.model.ConfigData;
 
 import java.util.Arrays;
@@ -13,15 +15,16 @@ import java.util.stream.Collectors;
 
 
 /**
- * Необходим для упрощения генерации Docx-файлов.
+ * Необходим для упрощения генерации Docx-файлов, а также получения domainData клиентами
  * Так как конфиг содержит Value и label в некоторых случаях необходимо вместо например "НБФЗОП" вставлять "40.05.01
  * Национальная безопасность (ну и т.д.)
  */
-@Getter
-@NoArgsConstructor
 @Service
 public class ConfigDataService {
 
+    /**
+     * Хранит Map, содержащий настройки конфигурации для отправки клиенту
+     */
     private final Map<ConfigData.ConfigType, List<ConfigData>> domainData = new HashMap<>();
 
     /**
@@ -65,4 +68,7 @@ public class ConfigDataService {
         return collect.get(0).getLabel();
     }
 
+    public Map<ConfigData.ConfigType, List<ConfigData>> getDomainData() {
+        return domainData;
+    }
 }

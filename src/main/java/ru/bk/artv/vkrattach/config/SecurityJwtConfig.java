@@ -10,6 +10,7 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
@@ -24,6 +25,7 @@ import java.util.Arrays;
  * Все бины для JWT аутентификации
  */
 @Configuration
+//@PropertySource("classpath:/application-keys.yml")
 public class SecurityJwtConfig {
     //Сериалайзеры /десериалайзеры токенов
     @Bean

@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
+import jakarta.validation.groups.Default;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.bk.artv.vkrattach.config.security.TokenUser;
 import ru.bk.artv.vkrattach.services.model.user.DefaultUser;
@@ -184,5 +186,20 @@ public class UserRestController {
         } else {
             throw new AccessDeniedException("You are not admin to delete users or you want to delete yourself, baby");
         }
+    }
+
+    /**
+     * Изменение пароля пользователя
+     *
+     * @param userDto с полями oldPassword и password, валидируется password
+     * @param tokenUser пользователь из аутентификации
+     */
+    @PatchMapping(path = "/password")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
+        public void changeUserPassword(@RequestBody @Validated({UserDto.ValidationPassword.class}) UserDto userDto, @AuthenticationPrincipal TokenUser tokenUser) {
+        DefaultUser user = converter.convertToDefaultUser(tokenUser);
+
+        userService.changeUserPassword(userDto, user);
     }
 }

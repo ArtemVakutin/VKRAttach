@@ -12,11 +12,11 @@ import ru.bk.artv.vkrattach.services.model.Lecturer;
 import ru.bk.artv.vkrattach.services.model.Order;
 import ru.bk.artv.vkrattach.services.docx.ThemeAttachDocxGenerator;
 import ru.bk.artv.vkrattach.services.model.Theme;
-import ru.bk.artv.vkrattach.services.model.user.DefaultUser;
 import ru.bk.artv.vkrattach.services.model.user.SimpleUser;
 
 import java.io.*;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Сервис для генерации Docx файлов
@@ -51,7 +51,7 @@ public class DownloadService {
     @Transactional
     public ByteArrayInputStream downloadReport(Long id) {
         String filePath = getClass().getClassLoader()
-                .getResource("report.docx")
+                .getResource("files/report.docx")
                 .getPath();
 
         if (userDao.findUserById(id) instanceof SimpleUser user) {
@@ -76,5 +76,25 @@ public class DownloadService {
         throw new ResourceNotFoundException("User is not SimpleUser");
     }
 
-    // TODO: 08.12.2023 Добавить генерацию рапортов и прочей макулатуры после тестирования основного функционала
+    /**
+     * Сервис для выгрузки образцов файлов
+     *
+     * @param fileName Название выгружаемого файла (должно соответствовать файлу в каталоге)
+     * @return Поток, обрабатывающийся в Rest-контроллере
+     */
+    public ByteArrayInputStream downloadExample(String fileName) {
+        String filePath = Optional.ofNullable(getClass()
+                .getClassLoader()
+                .getResource("files/" + fileName))
+                .orElseThrow(() -> new ResourceNotFoundException("Файл не найден"))
+                .getPath();
+
+        try (FileInputStream fileInputStream = new FileInputStream(filePath); ) {
+            return new ByteArrayInputStream(fileInputStream.readAllBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // TODO: 08.12.2023 Добавить прочей макулатуры помимо рапортов после тестирования основного функционала
 }

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @AllArgsConstructor
-public class ConfigDataProperties {
+public class ConfigDataPropertiesLoader {
 
     ConfigDataService data;
     DomainDataRepository dataRepository;
@@ -30,6 +30,7 @@ public class ConfigDataProperties {
 
         ConfigData.ConfigType[] values = ConfigData.ConfigType.values();
         Map<ConfigData.ConfigType, List<ConfigData>> dataMap = data.getDomainData();
+        dataMap.clear();
 
         Arrays.stream(values).forEach(type -> dataMap.put(type, all.stream()
                 .filter(data -> data.getType().equals(type))
@@ -42,6 +43,5 @@ public class ConfigDataProperties {
         });
 
         log.info("Data configuration complete successful");
-
     }
 }

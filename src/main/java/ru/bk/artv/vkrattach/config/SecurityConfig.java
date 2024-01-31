@@ -24,6 +24,7 @@ import ru.bk.artv.vkrattach.config.security.JwtLogoutFilter;
 import ru.bk.artv.vkrattach.config.security.RefreshTokenFilter;
 import ru.bk.artv.vkrattach.config.security.TokenAuthenticationFilter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -88,10 +89,11 @@ public class SecurityConfig {
     @Profile({"dev-react"})
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","chrome-extension://coohjcphdfgbiolnekdpbcijmhambjff"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(List.of("Content-Disposition"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

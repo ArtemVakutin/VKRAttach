@@ -13,7 +13,7 @@ INSERT INTO vkr_user(user_login, user_password, user_role, user_department)
 VALUES ('UPV',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
         'MODERATOR', 'УПв'),
-       ('UPС',
+       ('UPC',
         '$2a$10$D1i4amR0a3t43xwE8SDseup26fV9Yf9ZBs9bdG8.vlu8gqRFEHd1C',
         'MODERATOR', 'УПц'),
        ('CRIMINOLOGY',
